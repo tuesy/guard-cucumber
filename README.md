@@ -131,7 +131,7 @@ Since guard-cucumber version 0.3.2, the default `:cli` options are:
 :cli => '--no-profile --color --format progress --strict'
 ```
 
-This default configuration has been chosen to avoid strange behavior when mixing configurations form
+This default configuration has been chosen to avoid strange behavior when mixing configurations from
 the cucumber.yml default profile with the guard-cucumber `:cli` option.
 
 You can safely remove `config/cucumber.yml`, since all configuration is done in the `Guardfile`.
