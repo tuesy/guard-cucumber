@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gemspec
 
 gem 'rake'
-gem 'rspec'
+gem 'rspec', '~> 2.14'
 
 # The development group will no be
 # installed on Travis CI.

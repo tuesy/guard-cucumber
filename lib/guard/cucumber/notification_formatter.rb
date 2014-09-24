@@ -53,7 +53,7 @@ module Guard
       #
       def after_feature_element(feature_element)
         if @rerun
-          @file_names << feature_element.file_colon_line
+          @file_names << feature_element.location.to_s
           @rerun = false
         end
       end
@@ -67,7 +67,7 @@ module Guard
       # @param [Cucumber::Ast::Background] background the feature background
       # @param [String] file name and line number describing where the step is used
       #
-      def step_name(keyword, step_match, status, source_indent, background, file_colon_line)
+      def step_name(keyword, step_match, status, source_indent, background, location)
         if [:failed, :pending, :undefined].index(status)
           @rerun = true
           step_name = step_match.format_args(lambda { |param| "*#{ param }*" })

@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project         = 'guard-cucumber'
 
   s.add_dependency 'guard',       '>= 1.1.0'
-  s.add_dependency 'cucumber',    '>= 1.2.0'
+  s.add_dependency 'cucumber',    '>= 1.3.0'
 
   s.add_development_dependency 'bundler', '~> 1.1'
 
