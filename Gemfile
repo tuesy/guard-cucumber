@@ -13,6 +13,7 @@ group :development do
   gem 'guard-bundler'
   gem 'yard'
   gem 'redcarpet'
+  gem 'transpec', require: false
 end
 
 platforms :rbx do
