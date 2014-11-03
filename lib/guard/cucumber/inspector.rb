@@ -1,12 +1,10 @@
 module Guard
   class Cucumber
-
     # The inspector verifies of the changed paths are valid
     # for Guard::Cucumber.
     #
     module Inspector
       class << self
-
         # Clean the changed paths and return only valid
         # Cucumber features.
         #
@@ -14,10 +12,12 @@ module Guard
         # @param [Array<String>] feature_sets the feature sets
         # @return [Array<String>] the valid feature files
         #
-        def clean(paths, feature_sets)
+        def clean(paths, sets)
           paths.uniq!
           paths.compact!
-          paths = paths.select { |p| cucumber_file?(p, feature_sets) || cucumber_folder?(p, feature_sets) }
+          paths = paths.select do |p|
+            cucumber_file?(p, sets) || cucumber_folder?(p, sets)
+          end
           paths = paths.delete_if { |p| included_in_other_path?(p, paths) }
           clear_cucumber_files_list
           paths
@@ -32,7 +32,8 @@ module Guard
         # @return [Boolean] when the file is the feature folder
         #
         def cucumber_folder?(path, feature_sets)
-          path.match(/^\/?(#{ feature_sets.join('|') })/) && !path.match(/\..+$/)
+          sets = feature_sets.join("|")
+          path.match(/^\/?(#{ sets })/) && !path.match(/\..+$/)
         end
 
         # Tests if the file is valid.
@@ -42,7 +43,7 @@ module Guard
         # @return [Boolean] when the file valid
         #
         def cucumber_file?(path, feature_sets)
-          cucumber_files(feature_sets).include?(path.split(':').first)
+          cucumber_files(feature_sets).include?(path.split(":").first)
         end
 
         # Scans the project and keeps a list of all
@@ -53,7 +54,8 @@ module Guard
         # @return [Array<String>] the valid files
         #
         def cucumber_files(feature_sets)
-          @cucumber_files ||= Dir.glob("#{ feature_sets.join(',') }/**/*.feature")
+          glob = "#{ feature_sets.join(",") }/**/*.feature"
+          @cucumber_files ||= Dir.glob(glob)
         end
 
         # Clears the list of features in this project.
@@ -70,8 +72,16 @@ module Guard
         #
         def included_in_other_path?(path, paths)
           paths = paths.select { |p| p != path }
-          massaged = path[0...(path.index(':') || path.size)]
-          paths.any? { |p| (path.include?(p) && (path.gsub(p, '')).include?('/')) || massaged.include?(p) }
+          massaged = path[0...(path.index(":") || path.size)]
+          paths.any? { |p| _path_includes(path, p, massaged) }
+        end
+
+        private
+
+        def _path_includes(path, p, massaged)
+          includes = path.include?(p)
+          return true if includes && path.gsub(p, "").include?("/")
+          massaged.include?(p)
         end
       end
     end

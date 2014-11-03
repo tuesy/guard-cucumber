@@ -1,31 +1,41 @@
 module Guard
   class Cucumber
-
     # The Cucumber runner handles the execution of the cucumber binary.
     #
     module Runner
       class << self
-
         # Run the supplied features.
         #
         # @param [Array<String>] paths the feature files or directories
         # @param [Hash] options the options for the execution
-        # @option options [Array<String>] :feature_sets a list of non-standard feature directory/ies
+        # @option options [Array<String>] :feature_sets a list of non-standard
+        # feature directory/ies
         # @option options [Boolean] :bundler use bundler or not
-        # @option options [Array<String>] :rvm a list of rvm version to use for the test
+        # @option options [Array<String>] :rvm a list of rvm version to use for
+        # the test
         # @option options [Boolean] :notification show notifications
-        # @option options [String] :command_prefix allows adding an additional prefix to the cucumber command. Ideal for running xvfb-run for terminal only cucumber tests.
+        # @option options [String] :command_prefix allows adding an additional
+        # prefix to the cucumber command. Ideal for running xvfb-run for
+        # terminal only cucumber tests.
         # @return [Boolean] the status of the execution
         #
-        def run(paths, options = { })
+        def run(paths, options = {})
           return false if paths.empty?
 
-          message = options[:message] || (paths == ['features'] ? "Running all Cucumber features: #{ cucumber_command(paths, options) }" : "Running Cucumber features: #{ cucumber_command(paths, options) }")
-          paths   = options[:focus_on] ? Focuser.focus(paths, options[:focus_on]) : paths
+          cmd = cucumber_command(paths, options)
 
-          UI.info message, :reset => true
+          msg1 = "Running all Cucumber features: #{cmd}"
+          msg2 = "Running Cucumber features: #{cmd}"
+          msg = (paths == ["features"] ? msg1 : msg2)
 
-          system(cucumber_command(paths, options))
+          message = options[:message] || msg
+
+          paths = Focuser.focus(paths, options[:focus_on]) if options[:focus_on]
+          cmd = cucumber_command(paths, options)
+
+          UI.info message, reset: true
+
+          system(cmd)
         end
 
         private
@@ -35,28 +45,30 @@ module Guard
         # @param [Array<String>] paths the feature files or directories
         # @param [Hash] options the options for the execution
         # @option options [Boolean] :bundler use bundler or not
-        # @option options [Array<String>] :rvm a list of rvm version to use for the test
+        # @option options [Array<String>] :rvm a list of rvm version to use for
+        # the test
         # @option options [Boolean] :notification show notifications
-        # @option options [String] :command_prefix allows adding an additional prefix to the cucumber command. Ideal for running xvfb-run for terminal only cucumber tests.
+        # @option options [String] :command_prefix allows adding an additional
+        # prefix to the cucumber command. Ideal for running xvfb-run for
+        # terminal only cucumber tests.
         # @return [String] the Cucumber command
         #
         def cucumber_command(paths, options)
           cmd = []
           cmd << options[:command_prefix] if options[:command_prefix]
-          cmd << "rvm #{ options[:rvm].join(',') } exec" if options[:rvm].is_a?(Array)
-          cmd << 'bundle exec' if bundler? && options[:bundler] != false
+          if options[:rvm].is_a?(Array)
+            cmd << "rvm #{ options[:rvm].join(",") } exec"
+          end
+
+          cmd << "bundle exec" if bundler? && options[:bundler] != false
           cmd << cucumber_exec(options)
           cmd << options[:cli] if options[:cli]
 
           if options[:notification] != false
-            notification_formatter_path = File.expand_path(File.join(File.dirname(__FILE__), 'notification_formatter.rb'))
-            cmd << "--require #{ notification_formatter_path }"
-            cmd << '--format Guard::Cucumber::NotificationFormatter'
-            cmd << "--out #{ null_device }"
-            cmd << (options[:feature_sets] || ['features']).map {|path| "--require #{ path }"}.join(' ')
+            _add_notification(cmd, options)
           end
 
-          (cmd + paths).join(' ')
+          (cmd + paths).join(" ")
         end
 
         # Simple test if binstubs prefix should be used.
@@ -64,10 +76,11 @@ module Guard
         # @return [String] Cucumber executable
         #
         def cucumber_exec(options = {})
-            options[:binstubs] == true ? 'bin/cucumber' : 'cucumber'
+          options[:binstubs] == true ? "bin/cucumber" : "cucumber"
         end
 
-        # Simple test if bundler should be used. it just checks for the `Gemfile`.
+        # Simple test if bundler should be used. it just checks for the
+        # `Gemfile`.
         #
         # @return [Boolean] bundler exists
         #
@@ -80,9 +93,23 @@ module Guard
         # @return [String] the name of the null device
         #
         def null_device
-          RUBY_PLATFORM.index('mswin') ? 'NUL' : '/dev/null'
+          RUBY_PLATFORM.index("mswin") ? "NUL" : "/dev/null"
         end
 
+        private
+
+        def _add_notification(cmd, options)
+          this_dir = File.dirname(__FILE__)
+          formatter_path = File.join(this_dir, "notification_formatter.rb")
+          notification_formatter_path = File.expand_path(formatter_path)
+
+          cmd << "--require #{ notification_formatter_path }"
+          cmd << "--format Guard::Cucumber::NotificationFormatter"
+          cmd << "--out #{ null_device }"
+          cmd << (options[:feature_sets] || ["features"]).map do |path|
+            "--require #{ path }"
+          end.join(" ")
+        end
       end
     end
   end

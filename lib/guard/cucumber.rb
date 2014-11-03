@@ -1,18 +1,16 @@
-require 'guard'
-require 'guard/guard'
-require 'cucumber'
-require 'guard/cucumber/version'
+require "guard"
+require "guard/plugin"
+require "cucumber"
+require "guard/cucumber/version"
 
 module Guard
-
   # The Cucumber guard that gets notifications about the following
   # Guard events: `start`, `stop`, `reload`, `run_all` and `run_on_change`.
   #
-  class Cucumber < Guard
-
-    autoload :Runner, 'guard/cucumber/runner'
-    autoload :Inspector, 'guard/cucumber/inspector'
-    autoload :Focuser, 'guard/cucumber/focuser'
+  class Cucumber < Plugin
+    autoload :Runner, "guard/cucumber/runner"
+    autoload :Inspector, "guard/cucumber/inspector"
+    autoload :Focuser, "guard/cucumber/focuser"
 
     attr_accessor :last_failed, :failed_path
 
@@ -21,25 +19,31 @@ module Guard
     # @param [Array<Guard::Watcher>] watchers the watchers in the Guard block
     # @param [Hash] options the options for the Guard
     # @option options [String] :cli any arbitrary Cucumber CLI arguments
-    # @option options [Array<String>] :feature_sets a list of non-standard feature directory/ies
+    # @option options [Array<String>] :feature_sets a list of non-standard
+    # feature directory/ies
     # @option options [Boolean] :bundler use bundler or not
-    # @option options [Array<String>] :rvm a list of rvm version to use for the test
+    # @option options [Array<String>] :rvm a list of rvm version to use for the
+    # test
     # @option options [Boolean] :notification show notifications
-    # @option options [Boolean] :all_after_pass run all features after changed features pass
+    # @option options [Boolean] :all_after_pass run all features after changed
+    # features pass
     # @option options [Boolean] :all_on_start run all the features at startup
-    # @option options [Boolean] :keep_failed Keep failed features until they pass
-    # @option options [Boolean] :run_all run override any option when running all specs
-    # @option options [Boolean] :change_format use a different cucumber format when running individual features
+    # @option options [Boolean] :keep_failed Keep failed features until they
+    # pass
+    # @option options [Boolean] :run_all run override any option when running
+    # all specs
+    # @option options [Boolean] :change_format use a different cucumber format
+    # when running individual features
     #
-    def initialize(watchers = [], options = { })
-      super
+    def initialize(options = {})
+      super(options)
 
       @options = {
-          :all_after_pass => true,
-          :all_on_start   => true,
-          :keep_failed    => true,
-          :cli            => '--no-profile --color --format progress --strict',
-          :feature_sets   => ['features']
+        all_after_pass: true,
+        all_on_start: true,
+        keep_failed: true,
+        cli: "--no-profile --color --format progress --strict",
+        feature_sets: ["features"]
       }.update(options)
 
       @last_failed  = false
@@ -59,7 +63,9 @@ module Guard
     # @raise [:task_has_failed] when stop has failed
     #
     def run_all
-      passed = Runner.run(options[:feature_sets], options.merge(options[:run_all] || { }).merge(:message => 'Running all features'))
+      opts = options.merge(options[:run_all] || {})
+      opts.merge!(message: "Running all features")
+      passed = Runner.run(options[:feature_sets], opts)
 
       if passed
         @failed_paths = []
@@ -87,23 +93,17 @@ module Guard
     #
     def run_on_modifications(paths)
       paths += @failed_paths if @options[:keep_failed]
-      paths   = Inspector.clean(paths, options[:feature_sets])
-      options = @options[:change_format] ? change_format(@options[:change_format]) : @options
-      passed  = Runner.run(paths, paths.include?('features') ? options.merge({ :message => 'Running all features' }) : options)
+      paths = Inspector.clean(paths, options[:feature_sets])
 
-      if passed
-        # clean failed paths memory
-        @failed_paths -= paths if @options[:keep_failed]
-        # run all the specs if the changed specs failed, like autotest
-        run_all if @last_failed && @options[:all_after_pass]
-      else
-        # remember failed paths for the next change
-        @failed_paths += read_failed_features if @options[:keep_failed]
-        # track whether the changed feature failed for the next change
-        @last_failed = true
+      options = @options
+      if @options[:change_format]
+        options = change_format(@options[:change_format])
       end
 
-      throw :task_has_failed unless passed
+      msg = "Running all features"
+      options.merge!(message: msg) if paths.include?("features")
+
+      _run(paths, options)
     end
 
     private
@@ -116,9 +116,9 @@ module Guard
     def read_failed_features
       failed = []
 
-      if File.exist?('rerun.txt')
-        failed = File.open('rerun.txt') { |file| file.read.split(' ') }
-        File.delete('rerun.txt')
+      if File.exist?("rerun.txt")
+        failed = File.open("rerun.txt") { |file| file.read.split(" ") }
+        File.delete("rerun.txt")
       end
 
       failed
@@ -130,14 +130,31 @@ module Guard
     # @return [Hash] the new options
     #
     def change_format(format)
-      cli_parts = @options[:cli].split(' ')
+      cli_parts = @options[:cli].split(" ")
       cli_parts.each_with_index do |part, index|
-        if part == '--format' && cli_parts[index + 2] != '--out'
+        if part == "--format" && cli_parts[index + 2] != "--out"
           cli_parts[index + 1] = format
         end
       end
-      @options.merge(:cli => cli_parts.join(' '))
+      @options.merge(cli: cli_parts.join(" "))
     end
 
+    private
+
+    def _run(paths, options)
+      if Runner.run(paths, options)
+        # clean failed paths memory
+        @failed_paths -= paths if @options[:keep_failed]
+        # run all the specs if the changed specs failed, like autotest
+        run_all if @last_failed && @options[:all_after_pass]
+        return
+      end
+
+      # remember failed paths for the next change
+      @failed_paths += read_failed_features if @options[:keep_failed]
+      # track whether the changed feature failed for the next change
+      @last_failed = true
+      throw :task_has_failed
+    end
   end
 end
