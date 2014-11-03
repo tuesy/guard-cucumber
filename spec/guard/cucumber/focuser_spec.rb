@@ -13,7 +13,7 @@ describe Guard::Cucumber::Focuser do
   describe '.focus' do
     context 'when passed an empty paths list' do
       it 'returns false' do
-        focuser.focus([], '@focus').should be_false
+        expect(focuser.focus([], '@focus')).to be_falsey
       end
     end
 
@@ -45,14 +45,14 @@ describe Guard::Cucumber::Focuser do
       end
 
       before do
-        File.should_receive(:open).with(path, 'r').and_yield(file)
-        File.should_receive(:open).with(path_two, 'r').and_yield(file_two)
+        expect(File).to receive(:open).with(path, 'r').and_yield(file)
+        expect(File).to receive(:open).with(path_two, 'r').and_yield(file_two)
       end
 
       it 'returns an array of paths updated to focus on line numbers' do
         paths = [path, path_two]
 
-        focuser.focus(paths, focus_tag).should eql([
+        expect(focuser.focus(paths, focus_tag)).to eql([
           'foo.feature:1:6',
           'bar.feature:1:4'
         ])
@@ -76,11 +76,11 @@ describe Guard::Cucumber::Focuser do
       end
 
       before do
-        File.should_receive(:open).with(path, 'r').and_yield(file)
+        expect(File).to receive(:open).with(path, 'r').and_yield(file)
       end
 
       it 'returns an array of line numbers' do
-        focuser.scan_path_for_focus_tag(path, focus_tag).should eql([1, 6])
+        expect(focuser.scan_path_for_focus_tag(path, focus_tag)).to eql([1, 6])
       end
     end
 
@@ -97,21 +97,21 @@ describe Guard::Cucumber::Focuser do
       end
 
       before do
-        File.should_receive(:open).with(path, 'r').and_return(file)
+        expect(File).to receive(:open).with(path, 'r').and_return(file)
       end
 
       it 'returns an empty array' do
-        focuser.scan_path_for_focus_tag(path, focus_tag).should eql([])
+        expect(focuser.scan_path_for_focus_tag(path, focus_tag)).to eql([])
       end
     end
 
     context 'file that is a directory' do
       before do
-        File.should_receive(:directory?).with(dir).and_return(true)
+        expect(File).to receive(:directory?).with(dir).and_return(true)
       end
 
       it 'returns an empty array' do
-        focuser.scan_path_for_focus_tag(dir, focus_tag).should eql([])
+        expect(focuser.scan_path_for_focus_tag(dir, focus_tag)).to eql([])
       end
     end
 
@@ -119,8 +119,8 @@ describe Guard::Cucumber::Focuser do
       let(:path) { 'bar.feature:12' }
 
       it 'returns an empty array' do
-        File.should_not_receive(:open).with(path, 'r')
-        focuser.scan_path_for_focus_tag(path, focus_tag).should eql([])
+        expect(File).not_to receive(:open).with(path, 'r')
+        expect(focuser.scan_path_for_focus_tag(path, focus_tag)).to eql([])
       end
     end
   end
@@ -129,7 +129,7 @@ describe Guard::Cucumber::Focuser do
     it 'returns a path with line numbers appended' do
       line_numbers = [1,2]
       returned_path = focuser.append_line_numbers_to_path(line_numbers, path)
-      returned_path.should eql(path + ':1:2')
+      expect(returned_path).to eql(path + ':1:2')
     end
   end
 end

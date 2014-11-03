@@ -7,7 +7,7 @@ describe Guard::Cucumber do
   let(:runner) { Guard::Cucumber::Runner }
 
   before do
-    Dir.stub(:glob).and_return ['features/a.feature', 'features/subfolder/b.feature']
+    allow(Dir).to receive(:glob).and_return ['features/a.feature', 'features/subfolder/b.feature']
   end
 
   let(:default_options) do
@@ -25,23 +25,23 @@ describe Guard::Cucumber do
       let(:options) { {} }
 
       it 'sets a default :all_after_pass option' do
-        subject.options[:all_after_pass].should be_true
+        expect(subject.options[:all_after_pass]).to be_truthy
       end
 
       it 'sets a default :all_on_start option' do
-        subject.options[:all_on_start].should be_true
+        expect(subject.options[:all_on_start]).to be_truthy
       end
 
       it 'sets a default :keep_failed option' do
-        subject.options[:keep_failed].should be_true
+        expect(subject.options[:keep_failed]).to be_truthy
       end
 
       it 'sets a default :cli option' do
-        subject.options[:cli].should eql '--no-profile --color --format progress --strict'
+        expect(subject.options[:cli]).to eql '--no-profile --color --format progress --strict'
       end
 
       it 'sets a default :feature_sets option' do
-        subject.options[:feature_sets].should eql ['features']
+        expect(subject.options[:feature_sets]).to eql ['features']
       end
     end
 
@@ -56,27 +56,27 @@ describe Guard::Cucumber do
       end
 
       it 'sets the provided :all_after_pass option' do
-        subject.options[:all_after_pass].should be_false
+        expect(subject.options[:all_after_pass]).to be_falsey
       end
 
       it 'sets the provided :all_on_start option' do
-        subject.options[:all_on_start].should be_false
+        expect(subject.options[:all_on_start]).to be_falsey
       end
 
       it 'sets the provided :keep_failed option' do
-        subject.options[:keep_failed].should be_false
+        expect(subject.options[:keep_failed]).to be_falsey
       end
 
       it 'sets the provided :cli option' do
-        subject.options[:cli].should eql '--color'
+        expect(subject.options[:cli]).to eql '--color'
       end
 
       it 'sets the provided :feature_sets option' do
-        subject.options[:feature_sets].should eql ['feature_set_a', 'feature_set_b']
+        expect(subject.options[:feature_sets]).to eql ['feature_set_a', 'feature_set_b']
       end
 
       it 'sets the provided :focus_on option' do
-        subject.options[:focus_on].should eql '@focus'
+        expect(subject.options[:focus_on]).to eql '@focus'
       end
 
     end
@@ -84,7 +84,7 @@ describe Guard::Cucumber do
 
   describe '#start' do
     it 'calls #run_all' do
-      runner.should_receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
+      expect(runner).to receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
       subject.start
     end
 
@@ -92,7 +92,7 @@ describe Guard::Cucumber do
       let(:options) { { :all_on_start => false } }
 
       it 'does not call #run_all' do
-        runner.should_not_receive(:run).with(['features'], default_options.merge(:all_on_start => false,
+        expect(runner).not_to receive(:run).with(['features'], default_options.merge(:all_on_start => false,
                                                                                  :message      => 'Running all features'))
         subject.start
       end
@@ -101,29 +101,29 @@ describe Guard::Cucumber do
 
   describe '#run_all' do
     it 'runs all features' do
-      runner.should_receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
+      expect(runner).to receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
       subject.run_all
     end
 
     it 'cleans failed memory if passed' do
-      runner.should_receive(:run).with(['features/foo'], default_options).and_return(false)
+      expect(runner).to receive(:run).with(['features/foo'], default_options).and_return(false)
       expect {subject.run_on_modifications(['features/foo']) }.to throw_symbol :task_has_failed
-      runner.should_receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
-      runner.should_receive(:run).with(['features/bar'], default_options).and_return(true)
+      expect(runner).to receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
+      expect(runner).to receive(:run).with(['features/bar'], default_options).and_return(true)
       subject.run_on_modifications(['features/bar'])
     end
 
     it 'saves failed features' do
-      runner.should_receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(false)
-      File.should_receive(:exist?).with('rerun.txt').and_return true
+      expect(runner).to receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(false)
+      expect(File).to receive(:exist?).with('rerun.txt').and_return true
       file = double('file')
-      file.should_receive(:read).and_return 'features/foo'
-      File.stub(:open).and_yield file
-      File.should_receive(:delete).with('rerun.txt')
+      expect(file).to receive(:read).and_return 'features/foo'
+      allow(File).to receive(:open).and_yield file
+      expect(File).to receive(:delete).with('rerun.txt')
       expect {subject.run_all }.to throw_symbol :task_has_failed
 
-      runner.should_receive(:run).with(['features/bar', 'features/foo'], default_options).and_return(true)
-      runner.should_receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
+      expect(runner).to receive(:run).with(['features/bar', 'features/foo'], default_options).and_return(true)
+      expect(runner).to receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
       subject.run_on_modifications(['features/bar'])
     end
 
@@ -132,7 +132,7 @@ describe Guard::Cucumber do
       let(:options) { { :feature_sets => non_standard_feature_set } }
 
       it 'passes the feature sets as paths to runner' do
-        runner.should_receive(:run).with(non_standard_feature_set, anything).and_return(true)
+        expect(runner).to receive(:run).with(non_standard_feature_set, anything).and_return(true)
 
         subject.run_all
       end
@@ -142,7 +142,7 @@ describe Guard::Cucumber do
       let(:options) { { :cli => '--color' } }
 
       it 'directly passes :cli option to runner' do
-        runner.should_receive(:run).with(['features'], default_options.merge(:cli     => '--color',
+        expect(runner).to receive(:run).with(['features'], default_options.merge(:cli     => '--color',
                                                                              :message => 'Running all features')).and_return(true)
         subject.run_all
       end
@@ -153,11 +153,11 @@ describe Guard::Cucumber do
       let(:run_options) { default_options.merge :keep_failed => false }
 
       it 'does not save failed features if keep_failed is disabled' do
-        runner.should_receive(:run).with(['features'], run_options.merge(:message => 'Running all features')).and_return(false)
-        File.should_not_receive(:exist?).with('rerun.txt')
+        expect(runner).to receive(:run).with(['features'], run_options.merge(:message => 'Running all features')).and_return(false)
+        expect(File).not_to receive(:exist?).with('rerun.txt')
         expect {subject.run_all }.to throw_symbol :task_has_failed
-        runner.should_receive(:run).with(['features/bar'], run_options).and_return(true)
-        runner.should_receive(:run).with(['features'], run_options.merge(:message => 'Running all features')).and_return(true)
+        expect(runner).to receive(:run).with(['features/bar'], run_options).and_return(true)
+        expect(runner).to receive(:run).with(['features'], run_options.merge(:message => 'Running all features')).and_return(true)
         subject.run_on_modifications(['features/bar'])
       end
     end
@@ -171,7 +171,7 @@ describe Guard::Cucumber do
       end
 
       it 'allows the :run_all options to override the default_options' do
-        runner.should_receive(:run).with(anything, hash_including(:cli => '--format progress', :rvm => ['1.8.7', '1.9.2'])).and_return(true)
+        expect(runner).to receive(:run).with(anything, hash_including(:cli => '--format progress', :rvm => ['1.8.7', '1.9.2'])).and_return(true)
         subject.run_all
       end
     end
@@ -179,42 +179,42 @@ describe Guard::Cucumber do
 
   describe '#reload' do
     it 'clears failed_path' do
-      runner.should_receive(:run).with(['features/foo'], default_options).and_return(false)
+      expect(runner).to receive(:run).with(['features/foo'], default_options).and_return(false)
       expect { subject.run_on_modifications(['features/foo']) }.to throw_symbol :task_has_failed
       subject.reload
-      runner.should_receive(:run).with(['features/bar'], default_options).and_return(true)
-      runner.should_receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
+      expect(runner).to receive(:run).with(['features/bar'], default_options).and_return(true)
+      expect(runner).to receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
       subject.run_on_modifications(['features/bar'])
     end
   end
 
   describe '#run_on_modifications' do
     it 'runs cucumber with all features' do
-      runner.should_receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
+      expect(runner).to receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
       subject.run_on_modifications(['features'])
     end
 
     it 'runs cucumber with single feature' do
-      runner.should_receive(:run).with(['features/a.feature'], default_options).and_return(true)
+      expect(runner).to receive(:run).with(['features/a.feature'], default_options).and_return(true)
       subject.run_on_modifications(['features/a.feature'])
     end
 
     it 'passes the matched paths to the inspector for cleanup' do
-      runner.stub(:run).and_return(true)
-      Guard::Cucumber::Inspector.should_receive(:clean).with(['features'], ['features']).and_return ['features']
+      allow(runner).to receive(:run).and_return(true)
+      expect(Guard::Cucumber::Inspector).to receive(:clean).with(['features'], ['features']).and_return ['features']
       subject.run_on_modifications(['features'])
     end
 
     it 'calls #run_all if the changed specs pass after failing' do
-      runner.should_receive(:run).with(['features/foo'], default_options).and_return(false, true)
-      runner.should_receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
+      expect(runner).to receive(:run).with(['features/foo'], default_options).and_return(false, true)
+      expect(runner).to receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
       expect { subject.run_on_modifications(['features/foo']) }.to throw_symbol :task_has_failed
       subject.run_on_modifications(['features/foo'])
     end
 
     it 'does not call #run_all if the changed specs pass without failing' do
-      runner.should_receive(:run).with(['features/foo'], default_options).and_return(true)
-      runner.should_not_receive(:run).with(['features'], default_options.merge(:message => 'Running all features'))
+      expect(runner).to receive(:run).with(['features/foo'], default_options).and_return(true)
+      expect(runner).not_to receive(:run).with(['features'], default_options.merge(:message => 'Running all features'))
       subject.run_on_modifications(['features/foo'])
     end
 
@@ -222,7 +222,7 @@ describe Guard::Cucumber do
       let(:options) { { :cli => '--color' } }
 
       it 'directly passes the :cli option to the runner' do
-        runner.should_receive(:run).with(['features'], default_options.merge(:cli => '--color', :message => 'Running all features')).and_return(true)
+        expect(runner).to receive(:run).with(['features'], default_options.merge(:cli => '--color', :message => 'Running all features')).and_return(true)
         subject.run_on_modifications(['features'])
       end
     end
@@ -231,8 +231,8 @@ describe Guard::Cucumber do
       let(:options) { { :all_after_pass => false } }
 
       it 'does not call #run_all if the changed specs pass after failing but the :all_after_pass option is false' do
-        runner.should_receive(:run).with(['features/foo'], default_options.merge(:all_after_pass => false)).and_return(false, true)
-        runner.should_not_receive(:run).with(['features'], default_options.merge(:all_after_pass => false, :message => 'Running all features'))
+        expect(runner).to receive(:run).with(['features/foo'], default_options.merge(:all_after_pass => false)).and_return(false, true)
+        expect(runner).not_to receive(:run).with(['features'], default_options.merge(:all_after_pass => false, :message => 'Running all features'))
         expect {subject.run_on_modifications(['features/foo']) }.to throw_symbol :task_has_failed
         subject.run_on_modifications(['features/foo'])
       end
@@ -241,19 +241,19 @@ describe Guard::Cucumber do
     context 'with a rerun.txt file' do
       before do
         file = double('file')
-        file.stub(:read).and_return 'features/foo'
-        File.stub(:open).and_yield file
+        allow(file).to receive(:read).and_return 'features/foo'
+        allow(File).to receive(:open).and_yield file
       end
 
       it 'keeps failed spec and rerun later' do
-        runner.should_receive(:run).with(['features/foo'], default_options).and_return(false)
-        File.should_receive(:exist?).with('rerun.txt').and_return true
-        File.should_receive(:delete).with('rerun.txt')
+        expect(runner).to receive(:run).with(['features/foo'], default_options).and_return(false)
+        expect(File).to receive(:exist?).with('rerun.txt').and_return true
+        expect(File).to receive(:delete).with('rerun.txt')
         expect {subject.run_on_modifications(['features/foo']) }.to throw_symbol :task_has_failed
-        runner.should_receive(:run).with(['features/bar', 'features/foo'], default_options).and_return(true)
-        runner.should_receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
+        expect(runner).to receive(:run).with(['features/bar', 'features/foo'], default_options).and_return(true)
+        expect(runner).to receive(:run).with(['features'], default_options.merge(:message => 'Running all features')).and_return(true)
         subject.run_on_modifications(['features/bar'])
-        runner.should_receive(:run).with(['features/bar'], default_options).and_return(true)
+        expect(runner).to receive(:run).with(['features/bar'], default_options).and_return(true)
         subject.run_on_modifications(['features/bar'])
       end
     end
@@ -264,7 +264,7 @@ describe Guard::Cucumber do
       let(:expected_cli) { '-c --format pretty --format OtherFormatter --out /dev/null --profile guard' }
 
       it 'uses the change formatter if one is given' do
-        runner.should_receive(:run).with(['features/bar'], default_options.merge(:change_format => 'pretty',
+        expect(runner).to receive(:run).with(['features/bar'], default_options.merge(:change_format => 'pretty',
                                                                                  :cli           => expected_cli)).and_return(true)
         subject.run_on_modifications(['features/bar'])
       end
