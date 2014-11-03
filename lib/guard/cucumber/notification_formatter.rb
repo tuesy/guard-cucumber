@@ -1,13 +1,13 @@
-require 'guard'
-require 'guard/notifier'
-require 'cucumber/formatter/console'
-require 'cucumber/formatter/io'
+require "guard"
+require "guard/notifier"
+require "cucumber/formatter/console"
+require "cucumber/formatter/io"
 
 module Guard
   class Cucumber
-
     # The notification formatter is a Cucumber formatter that Guard::Cucumber
-    # passes to the Cucumber binary. It writes the `rerun.txt` file with the failed features
+    # passes to the Cucumber binary. It writes the `rerun.txt` file with the
+    # failed features
     # an creates system notifications.
     #
     # @see https://github.com/cucumber/cucumber/wiki/Custom-Formatters
@@ -23,7 +23,7 @@ module Guard
       # @param [String, IO] path_or_io the path or IO to the feature file
       # @param [Hash] options the options
       #
-      def initialize(step_mother, path_or_io, options)
+      def initialize(step_mother, _path_or_io, options)
         @options = options
         @file_names = []
         @step_mother = step_mother
@@ -33,7 +33,7 @@ module Guard
       #
       # @param [Array[Cucumber::Ast::Feature]] features the ran features
       #
-      def after_features(features)
+      def after_features(_features)
         notify_summary
         write_rerun_features if !@file_names.empty?
       end
@@ -65,14 +65,16 @@ module Guard
       # @param [Symbol] status the status of the step
       # @param [Integer] source_indent the source indentation
       # @param [Cucumber::Ast::Background] background the feature background
-      # @param [String] file name and line number describing where the step is used
+      # @param [String] file name and line number describing where the step is
+      # used
       #
-      def step_name(keyword, step_match, status, source_indent, background, location)
+      def step_name(_keyword, step_match, status, _src_indent, _bckgnd, _loc)
         if [:failed, :pending, :undefined].index(status)
           @rerun = true
           step_name = step_match.format_args(lambda { |param| "*#{ param }*" })
 
-          ::Guard::Notifier.notify step_name, :title => @feature_name, :image => icon_for(status)
+          options = { title: @feature_name, image: icon_for(status) }
+          ::Guard::Notifier.notify(step_name, options)
         end
       end
 
@@ -84,22 +86,25 @@ module Guard
       def notify_summary
         icon, messages = nil, []
 
-        [:failed, :skipped, :undefined, :pending, :passed].reverse.each do |status|
+        [:failed, :skipped, :undefined, :pending, :passed].reverse.
+          each do |status|
           if step_mother.steps(status).any?
             step_icon = icon_for(status)
             icon = step_icon if step_icon
-            messages << dump_count(step_mother.steps(status).length, 'step', status.to_s)
+            len = step_mother.steps(status).length
+            messages << dump_count(len, "step", status.to_s)
           end
         end
 
-        ::Guard::Notifier.notify messages.reverse.join(', '), :title => 'Cucumber Results', :image => icon
+        msg = messages.reverse.join(", ")
+        ::Guard::Notifier.notify msg, title: "Cucumber Results", image: icon
       end
 
       # Writes the `rerun.txt` file containing all failed features.
       #
       def write_rerun_features
-        File.open('rerun.txt', 'w') do |f|
-          f.puts @file_names.join(' ')
+        File.open("rerun.txt", "w") do |f|
+          f.puts @file_names.join(" ")
         end
       end
 
@@ -110,17 +115,16 @@ module Guard
       #
       def icon_for(status)
         case status
-          when :passed
-            :success
-          when :pending, :undefined, :skipped
-            :pending
-          when :failed
-            :failed
-          else
-            nil
+        when :passed
+          :success
+        when :pending, :undefined, :skipped
+          :pending
+        when :failed
+          :failed
+        else
+          nil
         end
       end
-
     end
   end
 end

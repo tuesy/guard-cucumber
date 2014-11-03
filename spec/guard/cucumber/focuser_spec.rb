@@ -1,23 +1,23 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Guard::Cucumber::Focuser do
 
   let(:focuser)     { Guard::Cucumber::Focuser }
-  let(:focus_tag)   { '@focus' }
-  let(:null_device) { RUBY_PLATFORM.index('mswin') ? 'NUL' : '/dev/null' }
+  let(:focus_tag)   { "@focus" }
+  let(:null_device) { RUBY_PLATFORM.index("mswin") ? "NUL" : "/dev/null" }
 
-  let(:dir)      { 'features' }
-  let(:path)     { 'foo.feature' }
-  let(:path_two) { 'bar.feature' }
+  let(:dir)      { "features" }
+  let(:path)     { "foo.feature" }
+  let(:path_two) { "bar.feature" }
 
-  describe '.focus' do
-    context 'when passed an empty paths list' do
-      it 'returns false' do
-        expect(focuser.focus([], '@focus')).to be_falsey
+  describe ".focus" do
+    context "when passed an empty paths list" do
+      it "returns false" do
+        expect(focuser.focus([], "@focus")).to be_falsey
       end
     end
 
-    context 'when passed a paths argument' do
+    context "when passed a paths argument" do
       let(:file) do
         StringIO.new <<-EOS
           @focus
@@ -45,23 +45,23 @@ describe Guard::Cucumber::Focuser do
       end
 
       before do
-        expect(File).to receive(:open).with(path, 'r').and_yield(file)
-        expect(File).to receive(:open).with(path_two, 'r').and_yield(file_two)
+        expect(File).to receive(:open).with(path, "r").and_yield(file)
+        expect(File).to receive(:open).with(path_two, "r").and_yield(file_two)
       end
 
-      it 'returns an array of paths updated to focus on line numbers' do
+      it "returns an array of paths updated to focus on line numbers" do
         paths = [path, path_two]
 
         expect(focuser.focus(paths, focus_tag)).to eql([
-          'foo.feature:1:6',
-          'bar.feature:1:4'
+          "foo.feature:1:6",
+          "bar.feature:1:4"
         ])
       end
     end
   end
 
-  describe '.scan_path_for_focus_tag' do
-    context 'file with focus tags in it' do
+  describe ".scan_path_for_focus_tag" do
+    context "file with focus tags in it" do
       let(:file) do
         StringIO.new <<-EOS
           @focus
@@ -76,15 +76,15 @@ describe Guard::Cucumber::Focuser do
       end
 
       before do
-        expect(File).to receive(:open).with(path, 'r').and_yield(file)
+        expect(File).to receive(:open).with(path, "r").and_yield(file)
       end
 
-      it 'returns an array of line numbers' do
+      it "returns an array of line numbers" do
         expect(focuser.scan_path_for_focus_tag(path, focus_tag)).to eql([1, 6])
       end
     end
 
-    context 'file without focus tags in it' do
+    context "file without focus tags in it" do
       let(:file) do
         StringIO.new <<-EOS
           Scenario: Foo
@@ -97,40 +97,39 @@ describe Guard::Cucumber::Focuser do
       end
 
       before do
-        expect(File).to receive(:open).with(path, 'r').and_return(file)
+        expect(File).to receive(:open).with(path, "r").and_return(file)
       end
 
-      it 'returns an empty array' do
+      it "returns an empty array" do
         expect(focuser.scan_path_for_focus_tag(path, focus_tag)).to eql([])
       end
     end
 
-    context 'file that is a directory' do
+    context "file that is a directory" do
       before do
         expect(File).to receive(:directory?).with(dir).and_return(true)
       end
 
-      it 'returns an empty array' do
+      it "returns an empty array" do
         expect(focuser.scan_path_for_focus_tag(dir, focus_tag)).to eql([])
       end
     end
 
-    context 'file that has already a line number' do
-      let(:path) { 'bar.feature:12' }
+    context "file that has already a line number" do
+      let(:path) { "bar.feature:12" }
 
-      it 'returns an empty array' do
-        expect(File).not_to receive(:open).with(path, 'r')
+      it "returns an empty array" do
+        expect(File).not_to receive(:open).with(path, "r")
         expect(focuser.scan_path_for_focus_tag(path, focus_tag)).to eql([])
       end
     end
   end
 
-  describe '.append_line_numbers_to_path' do
-    it 'returns a path with line numbers appended' do
-      line_numbers = [1,2]
+  describe ".append_line_numbers_to_path" do
+    it "returns a path with line numbers appended" do
+      line_numbers = [1, 2]
       returned_path = focuser.append_line_numbers_to_path(line_numbers, path)
-      expect(returned_path).to eql(path + ':1:2')
+      expect(returned_path).to eql(path + ":1:2")
     end
   end
 end
-
