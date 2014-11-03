@@ -1,6 +1,8 @@
 require "spec_helper"
 
-describe Guard::Cucumber::Runner do
+require "guard/cucumber/runner"
+
+RSpec.describe Guard::Cucumber::Runner do
   let(:runner) { Guard::Cucumber::Runner }
   let(:null_device) { RUBY_PLATFORM.index("mswin") ? "NUL" : "/dev/null" }
 

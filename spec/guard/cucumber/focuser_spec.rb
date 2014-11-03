@@ -1,6 +1,8 @@
 require "spec_helper"
 
-describe Guard::Cucumber::Focuser do
+require "guard/cucumber/focuser"
+
+RSpec.describe Guard::Cucumber::Focuser do
 
   let(:focuser)     { Guard::Cucumber::Focuser }
   let(:focus_tag)   { "@focus" }

@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Guard::Cucumber do
+RSpec.describe Guard::Cucumber do
   subject { Guard::Cucumber.new(options) }
 
   let(:options) { {} }

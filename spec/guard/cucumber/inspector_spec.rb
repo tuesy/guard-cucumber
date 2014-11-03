@@ -1,6 +1,8 @@
 require "spec_helper"
 
-describe Guard::Cucumber::Inspector do
+require "guard/cucumber/inspector"
+
+RSpec.describe Guard::Cucumber::Inspector do
 
   let(:inspector) { Guard::Cucumber::Inspector }
 
