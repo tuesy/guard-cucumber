@@ -10,6 +10,7 @@ gem 'rspec', '~> 2.14'
 #
 group :development do
   gem 'guard-rspec'
+  gem 'guard-bundler'
   gem 'yard'
   gem 'redcarpet'
 end
