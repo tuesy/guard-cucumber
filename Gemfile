@@ -14,6 +14,7 @@ group :development do
   gem 'yard'
   gem 'redcarpet'
   gem 'transpec', require: false
+  gem 'guard-rubocop'
 end
 
 platforms :rbx do
