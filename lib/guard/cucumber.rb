@@ -1,5 +1,5 @@
 require 'guard'
-require 'guard/guard'
+require 'guard/plugin'
 require 'cucumber'
 require 'guard/cucumber/version'
 
@@ -8,7 +8,7 @@ module Guard
   # The Cucumber guard that gets notifications about the following
   # Guard events: `start`, `stop`, `reload`, `run_all` and `run_on_change`.
   #
-  class Cucumber < Guard
+  class Cucumber < Plugin
 
     autoload :Runner, 'guard/cucumber/runner'
     autoload :Inspector, 'guard/cucumber/inspector'
@@ -31,8 +31,8 @@ module Guard
     # @option options [Boolean] :run_all run override any option when running all specs
     # @option options [Boolean] :change_format use a different cucumber format when running individual features
     #
-    def initialize(watchers = [], options = { })
-      super
+    def initialize(options={})
+      super(options)
 
       @options = {
           :all_after_pass => true,
