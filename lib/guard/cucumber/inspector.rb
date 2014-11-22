@@ -1,5 +1,5 @@
 module Guard
-  class Cucumber
+  class Cucumber < Plugin
     # The inspector verifies of the changed paths are valid
     # for Guard::Cucumber.
     #
