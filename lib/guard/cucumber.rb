@@ -2,15 +2,15 @@ require "guard"
 require "guard/plugin"
 require "cucumber"
 require "guard/cucumber/version"
+require "guard/cucumber/runner"
+require "guard/cucumber/inspector"
+require "guard/cucumber/focuser"
 
 module Guard
   # The Cucumber guard that gets notifications about the following
   # Guard events: `start`, `stop`, `reload`, `run_all` and `run_on_change`.
   #
   class Cucumber < Plugin
-    autoload :Runner, "guard/cucumber/runner"
-    autoload :Inspector, "guard/cucumber/inspector"
-    autoload :Focuser, "guard/cucumber/focuser"
 
     attr_accessor :last_failed, :failed_path
 

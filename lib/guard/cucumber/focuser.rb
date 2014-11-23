@@ -1,5 +1,5 @@
 module Guard
-  class Cucumber
+  class Cucumber < Plugin
     # The Cucumber focuser updates cucumber feature paths to
     # focus on sections tagged with a provided focus_tag.
     #

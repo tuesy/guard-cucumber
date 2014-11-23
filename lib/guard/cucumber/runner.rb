@@ -1,5 +1,5 @@
 module Guard
-  class Cucumber
+  class Cucumber < Plugin
     # The Cucumber runner handles the execution of the cucumber binary.
     #
     module Runner

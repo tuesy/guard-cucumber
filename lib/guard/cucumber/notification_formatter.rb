@@ -4,7 +4,7 @@ require "cucumber/formatter/console"
 require "cucumber/formatter/io"
 
 module Guard
-  class Cucumber
+  class Cucumber < Plugin
     # The notification formatter is a Cucumber formatter that Guard::Cucumber
     # passes to the Cucumber binary. It writes the `rerun.txt` file with the
     # failed features
