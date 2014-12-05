@@ -13,7 +13,6 @@ group :development do
   gem "guard-bundler"
   gem "yard"
   gem "redcarpet"
-  gem "transpec", require: false
   gem "guard-rubocop"
 end
 
