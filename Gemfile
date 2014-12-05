@@ -9,11 +9,12 @@ gem "rspec", "~> 3.1"
 # installed on Travis CI.
 #
 group :development do
-  gem "guard-rspec"
-  gem "guard-bundler"
-  gem "yard"
-  gem "redcarpet"
-  gem "guard-rubocop"
+  gem "guard-rspec", require: false
+  gem "guard-bundler", require: false
+  gem "yard", require: false
+  gem "redcarpet", require: false
+  gem "guard-rubocop", require: false
+  gem "rubocop", github: "bbatsov/rubocop", branch: "master"
 end
 
 platforms :rbx do
