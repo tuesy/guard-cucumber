@@ -1,5 +1,3 @@
-require "guard"
-require "guard/notifier"
 require "cucumber/formatter/console"
 require "cucumber/formatter/io"
 

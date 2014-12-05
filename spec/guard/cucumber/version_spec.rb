@@ -1,5 +1,3 @@
-require "spec_helper"
-
 RSpec.describe Guard::CucumberVersion do
   describe "VERSION" do
     it "defines the version" do

@@ -1,5 +1,3 @@
-require "guard"
-require "guard/plugin"
 require "cucumber"
 require "guard/cucumber/version"
 require "guard/cucumber/runner"

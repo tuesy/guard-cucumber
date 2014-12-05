@@ -15,6 +15,7 @@ group :development do
   gem "redcarpet", require: false
   gem "guard-rubocop", require: false
   gem "rubocop", github: "bbatsov/rubocop", branch: "master"
+  gem "guard-compat", require: false
 end
 
 platforms :rbx do

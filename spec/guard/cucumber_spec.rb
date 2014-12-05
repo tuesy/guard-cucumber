@@ -1,5 +1,3 @@
-require "spec_helper"
-
 RSpec.describe Guard::Cucumber do
   subject { Guard::Cucumber.new(options) }
 

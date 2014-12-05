@@ -1,5 +1,3 @@
-require "spec_helper"
-
 require "guard/cucumber/runner"
 
 RSpec.describe Guard::Cucumber::Runner do
