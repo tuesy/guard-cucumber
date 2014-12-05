@@ -54,7 +54,7 @@ module Guard
         # @return [Array<String>] the valid files
         #
         def cucumber_files(feature_sets)
-          glob = "#{ feature_sets.join(",") }/**/*.feature"
+          glob = "#{ feature_sets.join(',') }/**/*.feature"
           @cucumber_files ||= Dir.glob(glob)
         end
 

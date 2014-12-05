@@ -1,5 +1,3 @@
-require "spec_helper"
-
 RSpec.describe Guard::Cucumber do
   subject { Guard::Cucumber.new(options) }
 
@@ -82,7 +80,6 @@ RSpec.describe Guard::Cucumber do
       it "sets the provided :focus_on option" do
         expect(subject.options[:focus_on]).to eql "@focus"
       end
-
     end
   end
 

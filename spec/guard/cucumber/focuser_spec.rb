@@ -1,9 +1,6 @@
-require "spec_helper"
-
 require "guard/cucumber/focuser"
 
 RSpec.describe Guard::Cucumber::Focuser do
-
   let(:focuser)     { Guard::Cucumber::Focuser }
   let(:focus_tag)   { "@focus" }
   let(:null_device) { RUBY_PLATFORM.index("mswin") ? "NUL" : "/dev/null" }
