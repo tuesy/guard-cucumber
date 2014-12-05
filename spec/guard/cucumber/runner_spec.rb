@@ -19,7 +19,6 @@ RSpec.describe Guard::Cucumber::Runner do
     end
 
     context "with a paths argument" do
-
       it "runs the given paths" do
         expect(runner).to receive(:system).with(
           /features\/foo\.feature features\/bar\.feature$/
@@ -138,7 +137,6 @@ RSpec.describe Guard::Cucumber::Runner do
 
       it "runs with Bundler and binstubs with bundler option unset, "\
         "binstubs option to true and all_after_pass option to true" do
-
         req = @lib_path.join("guard/cucumber/notification_formatter.rb")
         expect(subject).to receive(:system).with(
           "bundle exec bin/cucumber"\
@@ -152,7 +150,6 @@ RSpec.describe Guard::Cucumber::Runner do
 
       it "runs with Bundler and binstubs with bundler option unset, "\
         "binstubs option to true and all_on_start option to true" do
-
         req = @lib_path.join("guard/cucumber/notification_formatter.rb")
         expect(subject).to receive(:system).with(
           "bundle exec bin/cucumber --require #{ req } "\
@@ -165,7 +162,6 @@ RSpec.describe Guard::Cucumber::Runner do
       it "runs with Bundler and binstubs with bundler option unset, "\
         "binstubs option to true, all_on_start option to true and "\
         "all_after_pass option to true" do
-
         req = @lib_path.join("guard/cucumber/notification_formatter.rb")
 
         expect(subject).to receive(:system).with(
@@ -202,5 +198,4 @@ RSpec.describe Guard::Cucumber::Runner do
       end
     end
   end
-
 end

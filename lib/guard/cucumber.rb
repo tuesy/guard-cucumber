@@ -11,7 +11,6 @@ module Guard
   # Guard events: `start`, `stop`, `reload`, `run_all` and `run_on_change`.
   #
   class Cucumber < Plugin
-
     attr_accessor :last_failed, :failed_path
 
     # Initialize Guard::Cucumber.

@@ -55,18 +55,12 @@ module Guard
         #
         def cucumber_command(paths, options)
           cmd = []
-          cmd << options[:command_prefix] if options[:command_prefix]
-          if options[:rvm].is_a?(Array)
-            cmd << "rvm #{ options[:rvm].join(",") } exec"
-          end
-
-          cmd << "bundle exec" if bundler? && options[:bundler] != false
+          _add_cmd_prefix(cmd, options[:command_prefix])
+          _add_rvm_options(cmd, options[:rvm])
+          _add_bundler_options(cmd, options[:bundler])
           cmd << cucumber_exec(options)
-          cmd << options[:cli] if options[:cli]
-
-          if options[:notification] != false
-            _add_notification(cmd, options)
-          end
+          _add_cli_options(cmd, options[:cli])
+          _add_notification(cmd, options)
 
           (cmd + paths).join(" ")
         end
@@ -99,6 +93,8 @@ module Guard
         private
 
         def _add_notification(cmd, options)
+          return unless options[:notification] != false
+
           this_dir = File.dirname(__FILE__)
           formatter_path = File.join(this_dir, "notification_formatter.rb")
           notification_formatter_path = File.expand_path(formatter_path)
@@ -109,6 +105,23 @@ module Guard
           cmd << (options[:feature_sets] || ["features"]).map do |path|
             "--require #{ path }"
           end.join(" ")
+        end
+
+        def _add_rvm_options(cmd, rvm_args)
+          return unless rvm_args.is_a?(Array)
+          cmd << "rvm #{ rvm_args.join(',') } exec"
+        end
+
+        def _add_bundler_options(cmd, bundler)
+          cmd << "bundle exec" if bundler? && bundler != false
+        end
+
+        def _add_cli_options(cmd, cli)
+          cmd << cli if cli
+        end
+
+        def _add_cmd_prefix(cmd, prefix)
+          cmd << prefix if prefix
         end
       end
     end

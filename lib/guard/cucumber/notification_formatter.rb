@@ -84,17 +84,13 @@ module Guard
       # result of the feature tests.
       #
       def notify_summary
-        icon, messages = nil, []
+        statuses = [:failed, :skipped, :undefined, :pending, :passed]
+        statuses = statuses.reverse
+        statuses.select! { |status| step_mother.steps(status).any? }
 
-        [:failed, :skipped, :undefined, :pending, :passed].reverse.
-          each do |status|
-          if step_mother.steps(status).any?
-            step_icon = icon_for(status)
-            icon = step_icon if step_icon
-            len = step_mother.steps(status).length
-            messages << dump_count(len, "step", status.to_s)
-          end
-        end
+        messages = statuses.map { |status| _status_to_message(status) }
+
+        icon = statuses.reverse.detect { |status| icon_for(status) }
 
         msg = messages.reverse.join(", ")
         ::Guard::Notifier.notify msg, title: "Cucumber Results", image: icon
@@ -121,9 +117,12 @@ module Guard
           :pending
         when :failed
           :failed
-        else
-          nil
         end
+      end
+
+      def status_to_message(status)
+        len = step_mother.steps(status).length
+        dump_count(len, "step", status.to_s)
       end
     end
   end

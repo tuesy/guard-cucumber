@@ -82,7 +82,6 @@ RSpec.describe Guard::Cucumber do
       it "sets the provided :focus_on option" do
         expect(subject.options[:focus_on]).to eql "@focus"
       end
-
     end
   end
 

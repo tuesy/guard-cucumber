@@ -3,7 +3,6 @@ require "spec_helper"
 require "guard/cucumber/inspector"
 
 RSpec.describe Guard::Cucumber::Inspector do
-
   let(:inspector) { Guard::Cucumber::Inspector }
 
   describe ".clean" do
@@ -22,7 +21,7 @@ RSpec.describe Guard::Cucumber::Inspector do
         expect(inspector.clean(
           %w(features/a.feature features/x.feature),
           %w(features))).
-            to eq(%w(features/a.feature))
+          to eq(%w(features/a.feature))
       end
 
       it "keeps a feature folder" do
@@ -61,11 +60,11 @@ RSpec.describe Guard::Cucumber::Inspector do
     context "with an additional feature set" do
       before do
         allow(Dir).to receive(:glob).
-        and_return(%w(
-          feature_set_1/a.feature
-          feature_set_1/subfolder/b.feature
-          feature_set_2/c.feature
-          feature_set_2/subfolder/d.feature))
+          and_return(%w(
+            feature_set_1/a.feature
+            feature_set_1/subfolder/b.feature
+            feature_set_2/c.feature
+            feature_set_2/subfolder/d.feature))
       end
 
       it "removes non-feature files" do
@@ -83,7 +82,7 @@ RSpec.describe Guard::Cucumber::Inspector do
             feature_set_2/c.feature
             feature_set_2/y.feature),
           %w(feature_set_1 feature_set_2))).
-            to eq(%w(feature_set_1/a.feature feature_set_2/c.feature))
+          to eq(%w(feature_set_1/a.feature feature_set_2/c.feature))
       end
 
       it "keeps the feature folders" do
@@ -94,11 +93,11 @@ RSpec.describe Guard::Cucumber::Inspector do
             feature_set_2/c.feature
             feature_set_2/subfolder),
           %w(feature_set_1 feature_set_2))).
-            to eq(%w(
-              feature_set_1/a.feature
-              feature_set_1/subfolder
-              feature_set_2/c.feature
-              feature_set_2/subfolder))
+          to eq(%w(
+            feature_set_1/a.feature
+            feature_set_1/subfolder
+            feature_set_2/c.feature
+            feature_set_2/subfolder))
       end
 
       it "removes duplicate paths" do
@@ -109,7 +108,7 @@ RSpec.describe Guard::Cucumber::Inspector do
             feature_set_2
             feature_set_2),
           %w(feature_set_1 feature_set_2))).
-            to eq(%w(feature_set_1 feature_set_2))
+          to eq(%w(feature_set_1 feature_set_2))
       end
 
       it "removes individual feature tests if the path is already "\
@@ -132,17 +131,17 @@ RSpec.describe Guard::Cucumber::Inspector do
             feature_set_2/subfolder
             feature_set_2),
           %w(feature_set_1 feature_set_2))).
-            to eq(%w(feature_set_1 feature_set_2))
+          to eq(%w(feature_set_1 feature_set_2))
 
         expect(inspector.clean(
           %w(feature_set_1 feature_set_2/subfolder),
           %w(feature_set_1 feature_set_2))).
-            to eq(%w(feature_set_1 feature_set_2/subfolder))
+          to eq(%w(feature_set_1 feature_set_2/subfolder))
 
         expect(inspector.clean(
           %w(feature_set_2 feature_set_1/subfolder),
           %w(feature_set_1 feature_set_2))).
-            to eq(%w(feature_set_2 feature_set_1/subfolder))
+          to eq(%w(feature_set_2 feature_set_1/subfolder))
       end
 
       it "removes feature files includes in feature folder" do
@@ -160,12 +159,12 @@ RSpec.describe Guard::Cucumber::Inspector do
           %w(feature_set_1/subfolder/b.feature feature_set_2),
 
           %w(feature_set_1 feature_set_2))).
-        to eq(%w(feature_set_1/subfolder/b.feature feature_set_2))
+          to eq(%w(feature_set_1/subfolder/b.feature feature_set_2))
 
         expect(inspector.clean(
           %w(feature_set_2/subfolder/d.feature feature_set_1),
           %w(feature_set_1 feature_set_2))).
-        to eq(%w( feature_set_2/subfolder/d.feature feature_set_1))
+          to eq(%w( feature_set_2/subfolder/d.feature feature_set_1))
       end
     end
   end
