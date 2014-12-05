@@ -86,7 +86,7 @@ module Guard
         statuses = statuses.reverse
         statuses.select! { |status| step_mother.steps(status).any? }
 
-        messages = statuses.map { |status| _status_to_message(status) }
+        messages = statuses.map { |status| status_to_message(status) }
 
         icon = statuses.reverse.detect { |status| icon_for(status) }
 
