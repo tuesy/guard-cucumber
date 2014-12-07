@@ -33,7 +33,7 @@ module Guard
           paths = Focuser.focus(paths, options[:focus_on]) if options[:focus_on]
           cmd = cucumber_command(paths, options)
 
-          UI.info message, reset: true
+          Compat::UI.info message, reset: true
 
           system(cmd)
         end

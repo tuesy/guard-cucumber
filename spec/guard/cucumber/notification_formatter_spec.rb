@@ -16,7 +16,7 @@ RSpec.describe Guard::Cucumber::NotificationFormatter do
     end
 
     it "formats the notification" do
-      allow(Guard::Notifier).to receive(:notify).
+      allow(Guard::Compat::UI).to receive(:notify).
         with("1 failed step, 1 skipped step, 1 undefined step, 1 pending " +
              "step, 1 passed step", title: "Cucumber Results", image: :failed)
 

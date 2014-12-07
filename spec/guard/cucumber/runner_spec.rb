@@ -5,7 +5,7 @@ RSpec.describe Guard::Cucumber::Runner do
   let(:null_device) { RUBY_PLATFORM.index("mswin") ? "NUL" : "/dev/null" }
 
   before do
-    allow(Guard::UI).to receive(:info)
+    allow(Guard::Compat::UI).to receive(:info)
     allow(runner).to receive(:system)
   end
 
