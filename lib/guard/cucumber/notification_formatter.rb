@@ -67,13 +67,14 @@ module Guard
       # used
       #
       def step_name(_keyword, step_match, status, _src_indent, _bckgnd, _loc)
-        if [:failed, :pending, :undefined].index(status)
-          @rerun = true
-          step_name = step_match.format_args(lambda { |param| "*#{ param }*" })
+        return unless [:failed, :pending, :undefined].index(status)
 
-          options = { title: @feature_name, image: icon_for(status) }
-          ::Guard::Notifier.notify(step_name, options)
-        end
+        #TODO: "NO COVERATE HERE!!"
+        @rerun = true
+        step_name = step_match.format_args(lambda { |param| "*#{ param }*" })
+
+        options = { title: @feature_name, image: icon_for(status) }
+        Guard::Compat::UI.notify(step_name, options)
       end
 
       private
@@ -91,7 +92,7 @@ module Guard
         icon = statuses.reverse.detect { |status| icon_for(status) }
 
         msg = messages.reverse.join(", ")
-        ::Guard::Notifier.notify msg, title: "Cucumber Results", image: icon
+        Guard::Compat::UI.notify msg, title: "Cucumber Results", image: icon
       end
 
       # Writes the `rerun.txt` file containing all failed features.

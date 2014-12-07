@@ -10,7 +10,7 @@ gem "rspec", "~> 3.1"
 #
 group :development do
   gem "guard-rspec", require: false
-  gem "guard-bundler", require: false
+  gem "guard-bundler", github: 'guard/guard-bundler', branch: 'master', require: false
   gem "yard", require: false
   gem "redcarpet", require: false
   gem "guard-rubocop", require: false
