@@ -1,3 +1,10 @@
+# Conditionally require this because it's run outside Guard
+# TODO: MOVE THIS OUTSIDE THE FORMATTER!!!!
+require "guard/notifier"
+
+require "cucumber"
+require "guard/compat/plugin"
+
 require "cucumber/formatter/console"
 require "cucumber/formatter/io"
 
@@ -69,7 +76,7 @@ module Guard
       def step_name(_keyword, step_match, status, _src_indent, _bckgnd, _loc)
         return unless [:failed, :pending, :undefined].index(status)
 
-        #TODO: "NO COVERATE HERE!!"
+        # TODO: NO COVERAGE HERE!
         @rerun = true
         step_name = step_match.format_args(lambda { |param| "*#{ param }*" })
 
@@ -83,6 +90,7 @@ module Guard
       # result of the feature tests.
       #
       def notify_summary
+        # TODO: MOVE THIS OUTSIDE THE FORMATTER!!!!
         statuses = [:failed, :skipped, :undefined, :pending, :passed]
         statuses = statuses.reverse
         statuses.select! { |status| step_mother.steps(status).any? }

@@ -1,3 +1,7 @@
+require "guard/compat/plugin"
+
+require "guard/cucumber/focuser"
+
 module Guard
   class Cucumber < Plugin
     # The Cucumber runner handles the execution of the cucumber binary.

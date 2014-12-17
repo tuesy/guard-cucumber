@@ -1,3 +1,5 @@
+require "guard/compat/plugin"
+
 module Guard
   class Cucumber < Plugin
     # The Cucumber focuser updates cucumber feature paths to
