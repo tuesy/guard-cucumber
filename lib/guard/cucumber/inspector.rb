@@ -1,3 +1,5 @@
+require "guard/compat/plugin"
+
 module Guard
   class Cucumber < Plugin
     # The inspector verifies of the changed paths are valid

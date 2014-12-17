@@ -1,3 +1,5 @@
+require "guard/compat/test/helper"
+
 require "guard/cucumber/focuser"
 
 RSpec.describe Guard::Cucumber::Focuser do

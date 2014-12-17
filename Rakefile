@@ -1,8 +1,13 @@
 require "bundler"
+
+require 'nenv'
 Bundler::GemHelper.install_tasks
 
 require "rspec/core/rake_task"
-RSpec::Core::RakeTask.new(:spec)
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.verbose = Nenv.ci?
+end
+
 task default: :spec
 
 require "rbconfig"

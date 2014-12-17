@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency "guard",       ">= 2.0.0"
   s.add_dependency "guard-compat",       "~> 1.0"
   s.add_dependency "cucumber",    ">= 1.3.0"
+  s.add_dependency "nenv",    "~> 0.1"
 
   # NOTE: this is the :test group since gemspec(development_group: :test) is used
   s.add_development_dependency "bundler", "~> 1.1"

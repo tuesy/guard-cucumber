@@ -1,3 +1,6 @@
+require "guard/compat/test/helper"
+require "guard/cucumber"
+
 RSpec.describe Guard::Cucumber do
   subject { Guard::Cucumber.new(options) }
 
