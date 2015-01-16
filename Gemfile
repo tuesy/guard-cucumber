@@ -1,6 +1,10 @@
 source "https://rubygems.org"
 
-gemspec development_group: :test
+gemspec development_group: :gem_build_tools
+
+group :gem_build_tools do
+  gem "rake"
+end
 
 # The development group will no be
 # installed on Travis CI.
@@ -13,6 +17,10 @@ group :development do
   gem "guard-rubocop", require: false
   gem "rubocop"
   gem "guard-compat", require: false
+end
+
+group :test do
+  gem "rspec", "~> 3.1"
 end
 
 platforms :rbx do
