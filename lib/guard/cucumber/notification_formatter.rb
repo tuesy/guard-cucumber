@@ -1,6 +1,15 @@
 # Conditionally require this because it's run outside Guard
-# TODO: MOVE THIS OUTSIDE THE FORMATTER!!!!
-require "guard/notifier"
+#
+if Object.const_defined?(:Guard)
+  # TODO: MOVE THIS OUTSIDE THE FORMATTER!!!!
+  # TODO: (call notify() in Guard::Cucumber, not here in formatter
+
+  # If notifier is defined it's likely Guard::Compat::Plugin's stub
+  unless Guard.const_defined?(:Notifier)
+    require "guard"
+    require "guard/notifier"
+  end
+end
 
 require "cucumber"
 require "guard/compat/plugin"
