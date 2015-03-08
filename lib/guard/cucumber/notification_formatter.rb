@@ -43,6 +43,10 @@ module Guard
         @step_mother = step_mother
       end
 
+      def before_background(background)
+        @feature_name = background.feature.name
+      end
+
       # Notification after all features have completed.
       #
       # @param [Array[Cucumber::Ast::Feature]] features the ran features
