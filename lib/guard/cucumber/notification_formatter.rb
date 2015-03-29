@@ -41,10 +41,15 @@ module Guard
         @options = options
         @file_names = []
         @step_mother = step_mother
+        @feature = nil
       end
 
-      def before_background(background)
-        @feature_name = background.feature.name
+      def before_background(_background)
+        # NOTE: background.feature is nil on newer gherkin versions
+      end
+
+      def before_feature(feature)
+        @feature = feature
       end
 
       # Notification after all features have completed.
@@ -62,7 +67,8 @@ module Guard
       #
       def before_feature_element(feature_element)
         @rerun = false
-        @feature_name = feature_element.name
+        # TODO: show feature element name instead?
+        # @feature = feature_element.name
       end
 
       # After a feature gets run.
@@ -89,11 +95,10 @@ module Guard
       def step_name(_keyword, step_match, status, _src_indent, _bckgnd, _loc)
         return unless [:failed, :pending, :undefined].index(status)
 
-        # TODO: NO COVERAGE HERE!
         @rerun = true
         step_name = step_match.format_args(lambda { |param| "*#{ param }*" })
 
-        options = { title: @feature_name, image: icon_for(status) }
+        options = { title: @feature.name, image: icon_for(status) }
         Guard::Compat::UI.notify(step_name, options)
       end
 

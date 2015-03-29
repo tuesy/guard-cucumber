@@ -25,19 +25,31 @@ RSpec.describe Guard::Cucumber::NotificationFormatter do
   end
 
   describe "#step_name" do
-    context "when failure is in a background step" do
-      let(:step_match) { instance_double(Cucumber::StepMatch) }
-      let(:feature) { instance_double(Cucumber::Ast::Feature, name: "feature1") }
-      let(:background) { instance_double(Cucumber::Ast::Background, feature: feature) }
+    let(:step_match) { instance_double(Cucumber::StepMatch) }
+    let(:feature) { instance_double(Cucumber::Core::Ast::Feature, name: "feature1") }
 
-      before do
-        subject.before_background(background)
-        allow(step_match).to receive(:format_args) do |block|
-          block.call "step_name1"
-        end
+    before do
+      subject.before_feature(feature)
+      subject.before_background(background)
+      allow(step_match).to receive(:format_args) do |block|
+        block.call "step_name1"
       end
+    end
+
+    context "when failure is in a background step" do
+      let(:background) { instance_double(Cucumber::Core::Ast::Background, feature: feature) }
 
       it "notifies with a valid feature name" do
+        expect(Guard::Compat::UI).to receive(:notify).with("*step_name1*", hash_including(title: "feature1"))
+        subject.step_name(nil, step_match, :failed, nil, nil, nil)
+      end
+    end
+
+    # workaround for: https://github.com/cucumber/gherkin/issues/334
+    context "with a buggy Background implementation" do
+      let(:background) { instance_double(Cucumber::Core::Ast::Background, feature: nil) }
+
+      it "correctly gets the feature name" do
         expect(Guard::Compat::UI).to receive(:notify).with("*step_name1*", hash_including(title: "feature1"))
         subject.step_name(nil, step_match, :failed, nil, nil, nil)
       end

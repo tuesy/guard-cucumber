@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.name        = "guard-cucumber"
   s.version     = Guard::CucumberVersion::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Michael Kessler"]
-  s.email       = ["michi@flinkfinger.com"]
+  s.authors     = ["Cezary Baginski", "Michael Kessler"]
+  s.email       = ["cezary@chronomantic.net"]
   s.homepage    = "http://github.com/guard/guard-cucumber"
   s.license     = 'MIT'
   s.summary     = "Guard plugin for Cucumber"
@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
 
   s.add_dependency "guard-compat",       "~> 1.0"
-  s.add_dependency "cucumber",    ">= 1.3.0"
+  s.add_dependency "cucumber",    "~> 2.0"
   s.add_dependency "nenv",    "~> 0.1"
 
   s.add_development_dependency "bundler", "~> 1.6"
