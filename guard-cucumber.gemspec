@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.name        = "guard-cucumber"
   s.version     = Guard::CucumberVersion::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Michael Kessler"]
-  s.email       = ["michi@flinkfinger.com"]
+  s.authors     = ["Cezary Baginski", "Michael Kessler"]
+  s.email       = ["cezary@chronomantic.net"]
   s.homepage    = "http://github.com/guard/guard-cucumber"
   s.license     = 'MIT'
   s.summary     = "Guard plugin for Cucumber"
