@@ -37,7 +37,7 @@ RSpec.describe Guard::Cucumber::NotificationFormatter do
     end
 
     context "when failure is in a background step" do
-      let(:background) { instance_double(Cucumber::Core::Ast::Background, feature: feature) }
+      let(:background) { instance_double(Cucumber::Formatter::LegacyApi::Ast::Background, feature: feature) }
 
       it "notifies with a valid feature name" do
         expect(Guard::Compat::UI).to receive(:notify).with("*step_name1*", hash_including(title: "feature1"))
@@ -47,7 +47,7 @@ RSpec.describe Guard::Cucumber::NotificationFormatter do
 
     # workaround for: https://github.com/cucumber/gherkin/issues/334
     context "with a buggy Background implementation" do
-      let(:background) { instance_double(Cucumber::Core::Ast::Background, feature: nil) }
+      let(:background) { instance_double(Cucumber::Formatter::LegacyApi::Ast::Background, feature: nil) }
 
       it "correctly gets the feature name" do
         expect(Guard::Compat::UI).to receive(:notify).with("*step_name1*", hash_including(title: "feature1"))
