@@ -59,31 +59,10 @@ module Guard
         #
         def cucumber_command(paths, options)
           cmd = []
-          _add_cmd_prefix(cmd, options[:command_prefix])
-          _add_rvm_options(cmd, options[:rvm])
-          _add_bundler_options(cmd, options[:bundler])
-          cmd << cucumber_exec(options)
-          _add_cli_options(cmd, options[:cli])
+          _add_cli_options(cmd, options[:cmd] || "cucumber")
           _add_notification(cmd, options)
-
+          _add_cli_options(cmd, options[:cmd_additional_args])
           (cmd + paths).join(" ")
-        end
-
-        # Simple test if binstubs prefix should be used.
-        #
-        # @return [String] Cucumber executable
-        #
-        def cucumber_exec(options = {})
-          options[:binstubs] == true ? "bin/cucumber" : "cucumber"
-        end
-
-        # Simple test if bundler should be used. it just checks for the
-        # `Gemfile`.
-        #
-        # @return [Boolean] bundler exists
-        #
-        def bundler?
-          @bundler ||= File.exist?("#{ Dir.pwd }/Gemfile")
         end
 
         # Returns a null device for all OS.
@@ -111,21 +90,8 @@ module Guard
           end.join(" ")
         end
 
-        def _add_rvm_options(cmd, rvm_args)
-          return unless rvm_args.is_a?(Array)
-          cmd << "rvm #{ rvm_args.join(',') } exec"
-        end
-
-        def _add_bundler_options(cmd, bundler)
-          cmd << "bundle exec" if bundler? && bundler != false
-        end
-
         def _add_cli_options(cmd, cli)
           cmd << cli if cli
-        end
-
-        def _add_cmd_prefix(cmd, prefix)
-          cmd << prefix if prefix
         end
       end
     end

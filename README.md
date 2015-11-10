@@ -53,57 +53,49 @@ Please read the [Guard documentation](http://github.com/guard/guard#readme) for 
 
 ## Options
 
-You can pass any of the standard Cucumber CLI options using the :cli option:
+You can pass any of the standard Cucumber CLI options using the :cmd_additional_args option:
 
 ```ruby
-guard 'cucumber', :cli => '-c --drb --port 1234 --profile guard'
+guard 'cucumber', :cmd_additional_args => '-c --drb --port 1234 --profile guard'
 ```
 
-Former `:color`, `:drb`, `:port` and `:profile` options are thus deprecated and have no effect anymore.
+Former `:color`, `:drb`, `:port`, `:profile` and `:cli` options are thus deprecated and have no effect anymore.
+
+You can specify custom cucumber command to run using the :cmd option:
+
+```ruby
+guard 'cucumber', :cmd => 'spring cucumber'
+```
+
+Former `:bundler`, `:bin_stubs`, `:change_format`, `:rvm` and `:command_prefix` options are thus deprecated and have no effect anymore.
+
 
 ### List of available options
 
 ```ruby
-:cli => '--profile guard -c'      # Pass arbitrary Cucumber CLI arguments,
-                                  # default: '--no-profile --color --format progress --strict'
+cmd: 'spring cucumber'            # Specify custom cucumber command to run, default: 'cucumber'
+cmd_additional_args:              # Pass arbitrary Cucumber CLI arguments,
+  '--profile guard -c'            # default: '--no-profile --color --format progress --strict'
 
-:feature_sets =>                  # Use non-default feature directory/ies
+feature_sets:                     # Use non-default feature directory/ies
   ['set_a', 'set_b']              # default: ['features']
 
-:bundler => false                 # Don't use "bundle exec" to run the Cucumber command
+notification: false               # Don't display Growl (or Libnotify) notification
                                   # default: true
 
-:binstubs => true                 # use "bin/cucumber" to run the Cucumber command (implies :bundler => true)
-                                  # default: false
-
-:rvm => ['1.8.7', '1.9.2']        # Directly run your features on multiple ruby versions
-                                  # default: nil
-
-:notification => false            # Don't display Growl (or Libnotify) notification
+all_after_pass: false             # Don't run all features after changed features pass
                                   # default: true
 
-:all_after_pass => false          # Don't run all features after changed features pass
+all_on_start: false               # Don't run all the features at startup
                                   # default: true
 
-:all_on_start => false            # Don't run all the features at startup
+keep_failed: false                # Keep failed features until they pass
                                   # default: true
 
-:keep_failed => false             # Keep failed features until they pass
-                                  # default: true
-
-:run_all => { :cli => "-p" }      # Override any option when running all specs
+run_all: {cmd: "-p"}              # Override any option when running all specs
                                   # default: {}
 
-:change_format => 'pretty'        # Use a different cucumber format when running individual features
-                                  # This replaces the Cucumber --format option within the :cli option
-                                  # default: nil
-
-:command_prefix => 'xvfb-run'     # Add a prefix to the cucumber command such as 'xvfb-run' or any
-                                  # other shell script.
-                                  # The example generates: 'xvfb-run bundle exec cucumber ...'
-                                  # default: nil
-
-:focus_on => 'dev'                # Focus on scenarios tagged with '@dev'
+focus_on: 'dev'                   # Focus on scenarios tagged with '@dev'
                                   # If '@dev' is on line 6 in 'foo.feature',
                                   # this example runs: 'bundle exec cucumber foo.feature:6'
                                   # default: nil
@@ -125,14 +117,14 @@ then the default profile forces guard-cucumber to always run all features, becau
 
 If you want to configure Cucumber from Guard solely, then you should pass `--no-profile` to the `:cli` option.
 
-Since guard-cucumber version 0.3.2, the default `:cli` options are:
+Since guard-cucumber version 0.3.2, the default `:cmd_additional_args` options are:
 
 ```ruby
-:cli => '--no-profile --color --format progress --strict'
+cmd_additional_args: '--no-profile --color --format progress --strict'
 ```
 
 This default configuration has been chosen to avoid strange behavior when mixing configurations from
-the cucumber.yml default profile with the guard-cucumber `:cli` option.
+the cucumber.yml default profile with the guard-cucumber `:cmd_additional_args` option.
 
 You can safely remove `config/cucumber.yml`, since all configuration is done in the `Guardfile`.
 
@@ -161,7 +153,7 @@ guard 'spork' do
   watch('spec/spec_helper.rb')
 end
 
-guard 'cucumber', :cli => '--drb --format progress --no-profile' do
+guard 'cucumber', :cmd_additional_args => '--drb --format progress --no-profile' do
   watch(%r{^features/.+\.feature$})
   watch(%r{^features/support/.+$})                      { 'features' }
   watch(%r{^features/step_definitions/(.+)_steps\.rb$}) { |m| Dir[File.join("**/#{m[1]}.feature")][0] || 'features' }
@@ -174,23 +166,24 @@ There is a section with alternative configurations on the [Wiki](https://github.
 
 To use Guard::Cucumber with [Zeus](https://github.com/burke/zeus), just set the command prefix:
 ```
-guard 'cucumber', :command_prefix => 'zeus', :bundler => false do
+guard 'cucumber', :cmd => 'zeus cucumber' do
   ...
 end
 ```
 
-You need to set `:bundler => false` to avoid using Bundler, as recommended in the Zeus documenation.
+Don't use `cmd: 'bundle exec zeus cucumber'` because Zeus recommends to avoid a bundler call.
 
 ## Cucumber with Spring
 
 To use Guard::Cucumber with [Spring](https://github.com/jonleighton/spring), just set the command prefix:
 ```
-guard 'cucumber', :command_prefix => 'spring', :bundler => false do
+guard 'cucumber', :cmd => 'spring cucumber' do
   ...
 end
 ```
 
-You need to set `:bundler => false` to avoid using Bundler, as recommended in the Spring documenation.
+Don't use `cmd: 'bundle exec zeus cucumber'` because Spring recommends to avoid a bundler call.
+
 
 Issues
 ------
