@@ -36,48 +36,18 @@ RSpec.describe Guard::Cucumber::Runner do
       end
     end
 
-    context "with a :rvm option" do
-      it "executes cucumber through the rvm versions" do
-        req = @lib_path.join("guard/cucumber/notification_formatter.rb")
-        expect(runner).to receive(:system).with(
-          "rvm 1.8.7,1.9.2 exec bundle exec cucumber"\
-          " --require #{ req }"\
-          " --format Guard::Cucumber::NotificationFormatter"\
-          " --out #{ null_device }"\
-          " --require features features"
-        )
-        runner.run(["features"], rvm: ["1.8.7", "1.9.2"])
-      end
+    it "runs cucumber according to passed cmd option" do
+      req = @lib_path.join("guard/cucumber/notification_formatter.rb")
+      expect(runner).to receive(:system).with(
+                          "xvfb-run bundle exec cucumber "\
+                          "--require #{ req } "\
+                          "--format Guard::Cucumber::NotificationFormatter "\
+                          "--out #{ null_device } "\
+                          "--require features features"
+          )
+      runner.run(["features"], cmd: "xvfb-run bundle exec cucumber")
     end
-
-    context "with a :command_prefix option" do
-      it "executes cucumber with the command_prefix option" do
-        req = @lib_path.join("guard/cucumber/notification_formatter.rb")
-        expect(runner).to receive(:system).with(
-          "xvfb-run bundle exec cucumber "\
-          "--require #{ req } "\
-          "--format Guard::Cucumber::NotificationFormatter "\
-          "--out #{ null_device } "\
-          "--require features features"
-        )
-        runner.run(["features"], command_prefix: "xvfb-run")
-      end
-    end
-
-    context "with a :bundler option" do
-      it "runs without bundler when false" do
-        req = @lib_path.join("guard/cucumber/notification_formatter.rb")
-        expect(runner).to receive(:system).with(
-          "cucumber"\
-          " --require #{ req }"\
-          " --format Guard::Cucumber::NotificationFormatter"\
-          " --out #{ null_device }"\
-          " --require features features"
-        )
-        runner.run(["features"], bundler: false)
-      end
-    end
-
+    
     context "with a :focus_on option" do
       it "passes the value in :focus_on to the Focuser" do
         paths = ["features"]
@@ -93,104 +63,23 @@ RSpec.describe Guard::Cucumber::Runner do
       end
     end
 
-    describe ":binstubs" do
-      it "runs without Bundler with binstubs option to true and "\
-        "bundler option to false" do
-        req = @lib_path.join("guard/cucumber/notification_formatter.rb")
-        expect(subject).to receive(:system).with(
-          "bin/cucumber"\
-          " --require #{ req }"\
-          " --format Guard::Cucumber::NotificationFormatter"\
-          " --out #{ null_device }"\
-          " --require features features"
-        ).and_return(true)
-        subject.run(["features"], bundler: false, binstubs: true)
-      end
-
-      it "runs with Bundler and binstubs with bundler option to true "\
-        "and binstubs option to true" do
-        req = @lib_path.join("guard/cucumber/notification_formatter.rb")
-        expect(subject).to receive(:system).with(
-          "bundle exec bin/cucumber"\
-          " --require #{ req }"\
-          " --format Guard::Cucumber::NotificationFormatter"\
-          " --out #{ null_device }"\
-          " --require features features"
-        ).and_return(true)
-        subject.run(["features"], bundler: true, binstubs: true)
-      end
-
-      it "runs with Bundler and binstubs with bundler option unset "\
-        "and binstubs option to true" do
-        req = @lib_path.join("guard/cucumber/notification_formatter.rb")
-        expect(subject).to receive(:system).with(
-          "bundle exec bin/cucumber"\
-          " --require #{ req } "\
-          "--format Guard::Cucumber::NotificationFormatter "\
-          "--out #{ null_device }"\
-          " --require features features"
-        ).and_return(true)
-        subject.run(["features"], binstubs: true)
-      end
-
-      it "runs with Bundler and binstubs with bundler option unset, "\
-        "binstubs option to true and all_after_pass option to true" do
-        req = @lib_path.join("guard/cucumber/notification_formatter.rb")
-        expect(subject).to receive(:system).with(
-          "bundle exec bin/cucumber"\
-          " --require #{ req } "\
-          "--format Guard::Cucumber::NotificationFormatter"\
-          " --out #{ null_device }"\
-          " --require features features"
-        ).and_return(true)
-        subject.run(["features"], binstubs: true, all_after_pass: true)
-      end
-
-      it "runs with Bundler and binstubs with bundler option unset, "\
-        "binstubs option to true and all_on_start option to true" do
-        req = @lib_path.join("guard/cucumber/notification_formatter.rb")
-        expect(subject).to receive(:system).with(
-          "bundle exec bin/cucumber --require #{ req } "\
-          "--format Guard::Cucumber::NotificationFormatter "\
-          "--out #{ null_device } --require features features"
-        ).and_return(true)
-        subject.run(["features"], binstubs: true, all_on_start: true)
-      end
-
-      it "runs with Bundler and binstubs with bundler option unset, "\
-        "binstubs option to true, all_on_start option to true and "\
-        "all_after_pass option to true" do
-        req = @lib_path.join("guard/cucumber/notification_formatter.rb")
-
-        expect(subject).to receive(:system).with(
-          "bundle exec bin/cucumber --require #{ req } "\
-          "--format Guard::Cucumber::NotificationFormatter "\
-          "--out #{ null_device } --require features features"
-        ).and_return(true)
-
-        subject.run(
-          ["features"],
-          binstubs: true,
-          all_after_pass: true,
-          all_on_start: true)
-      end
-    end
-
-    context "with a :cli option" do
+    context "with a :cmd_additional_args option" do
       it "appends the cli arguments when calling cucumber" do
         req = @lib_path.join("guard/cucumber/notification_formatter.rb")
         expect(runner).to receive(:system).with(
-          "bundle exec cucumber --custom command --require #{req} "\
+          "cucumber --require #{req} "\
           "--format Guard::Cucumber::NotificationFormatter "\
-          "--out #{ null_device } --require features features")
-        runner.run(["features"], cli: "--custom command")
+          "--out #{ null_device } --require features "\
+          "--custom command "\
+          "features")
+        runner.run(["features"], cmd_additional_args: "--custom command")
       end
     end
 
     context "with a :notification option" do
       it "does not add the guard notification listener" do
         expect(runner).to receive(:system).with(
-          "bundle exec cucumber features"
+          "cucumber features"
         )
         runner.run(["features"], notification: false)
       end
