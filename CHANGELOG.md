@@ -1,3 +1,5 @@
+# NOTE: Moved to [Github releases page](https://github.com/guard/guard-cucumber/releases).
+
 # Changelog
 
 ## 1.4.1 - Dec 27, 2013
