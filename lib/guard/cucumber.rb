@@ -61,13 +61,13 @@ module Guard
     #
     def run_all
       opts = options.merge(options[:run_all] || {})
-      opts.merge!(message: "Running all features")
+      opts[:message] = "Running all features"
       passed = Runner.run(options[:feature_sets], opts)
 
       if passed
         @failed_paths = []
-      else
-        @failed_paths = read_failed_features if @options[:keep_failed]
+      elsif @options[:keep_failed]
+        @failed_paths = read_failed_features
       end
 
       @last_failed = !passed
@@ -98,7 +98,7 @@ module Guard
       end
 
       msg = "Running all features"
-      options.merge!(message: msg) if paths.include?("features")
+      options[:message] = msg if paths.include?("features")
 
       _run(paths, options)
     end
@@ -135,8 +135,6 @@ module Guard
       end
       @options.merge(cli: cli_parts.join(" "))
     end
-
-    private
 
     def _run(paths, options)
       if Runner.run(paths, options)

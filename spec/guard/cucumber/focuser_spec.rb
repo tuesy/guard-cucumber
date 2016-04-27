@@ -54,9 +54,9 @@ RSpec.describe Guard::Cucumber::Focuser do
         paths = [path, path_two]
 
         expect(focuser.focus(paths, focus_tag)).to eql([
-          "foo.feature:1:6",
-          "bar.feature:1:4"
-        ])
+                                                         "foo.feature:1:6",
+                                                         "bar.feature:1:4"
+                                                       ])
       end
     end
   end

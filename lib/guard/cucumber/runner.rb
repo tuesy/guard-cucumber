@@ -82,11 +82,11 @@ module Guard
           formatter_path = File.join(this_dir, "notification_formatter.rb")
           notification_formatter_path = File.expand_path(formatter_path)
 
-          cmd << "--require #{ notification_formatter_path }"
+          cmd << "--require #{notification_formatter_path}"
           cmd << "--format Guard::Cucumber::NotificationFormatter"
-          cmd << "--out #{ null_device }"
+          cmd << "--out #{null_device}"
           cmd << (options[:feature_sets] || ["features"]).map do |path|
-            "--require #{ path }"
+            "--require #{path}"
           end.join(" ")
         end
 

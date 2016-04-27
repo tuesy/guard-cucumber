@@ -65,7 +65,7 @@ module Guard
       #
       # @param [Cucumber::Ast::FeatureElement] feature_element
       #
-      def before_feature_element(feature_element)
+      def before_feature_element(_feature_element)
         @rerun = false
         # TODO: show feature element name instead?
         # @feature = feature_element.name
@@ -96,7 +96,7 @@ module Guard
         return unless [:failed, :pending, :undefined].index(status)
 
         @rerun = true
-        step_name = step_match.format_args(lambda { |param| "*#{ param }*" })
+        step_name = step_match.format_args(lambda { |param| "*#{param}*" })
 
         options = { title: @feature.name, image: icon_for(status) }
         Guard::Compat::UI.notify(step_name, options)

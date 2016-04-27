@@ -372,7 +372,7 @@ RSpec.describe Guard::Cucumber do
           with(
             ["features/bar"],
             default_options.merge(change_format: "pretty", cli: expected_cli)
-        ).and_return(true)
+          ).and_return(true)
 
         subject.run_on_modifications(["features/bar"])
       end
