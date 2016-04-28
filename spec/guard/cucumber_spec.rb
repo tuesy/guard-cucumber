@@ -18,7 +18,8 @@ RSpec.describe Guard::Cucumber do
       all_after_pass: true,
       all_on_start: true,
       keep_failed: true,
-      cmd_additional_args: "",
+      cmd: "cucumber",
+      cmd_additional_args: "--no-profile --color --format progress --strict",
       feature_sets: ["features"]
     }
   end
@@ -41,7 +42,7 @@ RSpec.describe Guard::Cucumber do
 
       it "sets a default :cmd_additional_args option" do
         expect(subject.options[:cmd_additional_args]).
-          to eql ""
+          to eql "--no-profile --color --format progress --strict"
       end
 
       it "sets a default :feature_sets option" do
