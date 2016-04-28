@@ -11,6 +11,17 @@ module Guard
   class Cucumber < Plugin
     attr_accessor :last_failed, :failed_path
 
+    KNOWN_OPTIONS = %w(
+      all_after_pass
+      all_on_start
+      keep_failed
+      feature_sets
+
+      run_all
+      focus_on
+      notification
+    ).map(&:to_sym)
+
     # Initialize Guard::Cucumber.
     #
     # @param [Array<Guard::Watcher>] watchers the watchers in the Guard block
@@ -36,6 +47,12 @@ module Guard
         cmd_additional_args: "",
         feature_sets: ["features"]
       }.update(options)
+
+      unknown_options = @options.keys - KNOWN_OPTIONS
+      unknown_options.each do |unknown|
+        msg = "Unknown guard-cucumber option: #{unknown.inspect}"
+        Guard::Compat::UI.warning(msg)
+      end
 
       @last_failed  = false
       @failed_paths = []
