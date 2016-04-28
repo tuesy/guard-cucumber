@@ -11,7 +11,6 @@ RSpec.describe Guard::Cucumber do
   before do
     allow(Dir).to receive(:glob).
       and_return ["features/a.feature", "features/subfolder/b.feature"]
-    allow(Guard::Compat::UI).to receive(:warning)
   end
 
   let(:default_options) do
@@ -87,6 +86,10 @@ RSpec.describe Guard::Cucumber do
     end
 
     context "when unknown options are provided" do
+      before do
+        allow(Guard::Compat::UI).to receive(:warning)
+      end
+
       let(:options) { { foobar: false } }
       it "warns about unknown options" do
         expect(Guard::Compat::UI).to receive(:warning).

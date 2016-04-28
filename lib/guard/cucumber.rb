@@ -12,6 +12,9 @@ module Guard
     attr_accessor :last_failed, :failed_path
 
     KNOWN_OPTIONS = %w(
+      cmd
+      cmd_additional_args
+
       all_after_pass
       all_on_start
       keep_failed
@@ -36,6 +39,8 @@ module Guard
     # pass
     # @option options [Boolean] :run_all run override any option when running
     # all specs
+    # @option options [Boolean] :cmd the command to run
+    # @option options [Boolean] :cmd_additional_args additional args to append
     #
     def initialize(options = {})
       super(options)
