@@ -15,12 +15,8 @@ module Guard
     #
     # @param [Array<Guard::Watcher>] watchers the watchers in the Guard block
     # @param [Hash] options the options for the Guard
-    # @option options [String] :cli any arbitrary Cucumber CLI arguments
     # @option options [Array<String>] :feature_sets a list of non-standard
     # feature directory/ies
-    # @option options [Boolean] :bundler use bundler or not
-    # @option options [Array<String>] :rvm a list of rvm version to use for the
-    # test
     # @option options [Boolean] :notification show notifications
     # @option options [Boolean] :all_after_pass run all features after changed
     # features pass
@@ -29,8 +25,6 @@ module Guard
     # pass
     # @option options [Boolean] :run_all run override any option when running
     # all specs
-    # @option options [Boolean] :change_format use a different cucumber format
-    # when running individual features
     #
     def initialize(options = {})
       super(options)
@@ -39,7 +33,7 @@ module Guard
         all_after_pass: true,
         all_on_start: true,
         keep_failed: true,
-        cli: "--no-profile --color --format progress --strict",
+        cmd_additional_args: "",
         feature_sets: ["features"]
       }.update(options)
 
@@ -93,9 +87,6 @@ module Guard
       paths = Inspector.clean(paths, options[:feature_sets])
 
       options = @options
-      if @options[:change_format]
-        options = change_format(@options[:change_format])
-      end
 
       msg = "Running all features"
       options[:message] = msg if paths.include?("features")
@@ -119,21 +110,6 @@ module Guard
       end
 
       failed
-    end
-
-    # Change the `--format` cli option.
-    #
-    # @param [String] format the new format
-    # @return [Hash] the new options
-    #
-    def change_format(format)
-      cli_parts = @options[:cli].split(" ")
-      cli_parts.each_with_index do |part, index|
-        if part == "--format" && cli_parts[index + 2] != "--out"
-          cli_parts[index + 1] = format
-        end
-      end
-      @options.merge(cli: cli_parts.join(" "))
     end
 
     def _run(paths, options)
