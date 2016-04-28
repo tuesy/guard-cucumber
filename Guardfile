@@ -1,4 +1,4 @@
-group :spec, halt_on_failure: true do
+group :spec, halt_on_fail: true do
   guard :bundler do
     watch("Gemfile")
     # Uncomment next line if your Gemfile contains the `gemspec' command.
