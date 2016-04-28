@@ -94,7 +94,7 @@ all_on_start: false               # Don't run all the features at startup
 keep_failed: false                # Keep failed features until they pass
                                   # default: true
 
-run_all: {cmd: "-p"}              # Override any option when running all specs
+run_all: {cmd_additional_args: "--format pretty"}              # Override any option when running all specs
                                   # default: {}
 
 focus_on: 'dev'                   # Focus on scenarios tagged with '@dev'
