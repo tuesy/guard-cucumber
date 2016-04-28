@@ -49,7 +49,8 @@ module Guard
         all_after_pass: true,
         all_on_start: true,
         keep_failed: true,
-        cmd_additional_args: "",
+        cmd: "cucumber",
+        cmd_additional_args: "--no-profile --color --format progress --strict",
         feature_sets: ["features"]
       }.update(options)
 
