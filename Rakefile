@@ -1,6 +1,6 @@
 require "bundler"
 
-require 'nenv'
+require "nenv"
 Bundler::GemHelper.install_tasks
 
 require "rspec/core/rake_task"

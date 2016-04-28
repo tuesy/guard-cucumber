@@ -11,6 +11,7 @@ RSpec.describe Guard::Cucumber do
   before do
     allow(Dir).to receive(:glob).
       and_return ["features/a.feature", "features/subfolder/b.feature"]
+    allow(Guard::Compat::UI).to receive(:warning)
   end
 
   let(:default_options) do
@@ -18,7 +19,7 @@ RSpec.describe Guard::Cucumber do
       all_after_pass: true,
       all_on_start: true,
       keep_failed: true,
-      cli: "--no-profile --color --format progress --strict",
+      cmd_additional_args: "",
       feature_sets: ["features"]
     }
   end
@@ -39,9 +40,9 @@ RSpec.describe Guard::Cucumber do
         expect(subject.options[:keep_failed]).to be_truthy
       end
 
-      it "sets a default :cli option" do
-        expect(subject.options[:cli]).
-          to eql "--no-profile --color --format progress --strict"
+      it "sets a default :cmd_additional_args option" do
+        expect(subject.options[:cmd_additional_args]).
+          to eql ""
       end
 
       it "sets a default :feature_sets option" do
@@ -54,7 +55,7 @@ RSpec.describe Guard::Cucumber do
         { all_after_pass: false,
           all_on_start: false,
           keep_failed: false,
-          cli: "--color",
+          cmd_additional_args: "--color",
           feature_sets: ["feature_set_a", "feature_set_b"],
           focus_on: "@focus" }
       end
@@ -71,8 +72,8 @@ RSpec.describe Guard::Cucumber do
         expect(subject.options[:keep_failed]).to be_falsey
       end
 
-      it "sets the provided :cli option" do
-        expect(subject.options[:cli]).to eql "--color"
+      it "sets the provided :cmd_additional_args option" do
+        expect(subject.options[:cmd_additional_args]).to eql "--color"
       end
 
       it "sets the provided :feature_sets option" do
@@ -82,6 +83,15 @@ RSpec.describe Guard::Cucumber do
 
       it "sets the provided :focus_on option" do
         expect(subject.options[:focus_on]).to eql "@focus"
+      end
+    end
+
+    context "when unknown options are provided" do
+      let(:options) { { foobar: false } }
+      it "warns about unknown options" do
+        expect(Guard::Compat::UI).to receive(:warning).
+          with("Unknown guard-cucumber option: :foobar")
+        subject
       end
     end
   end
@@ -160,12 +170,13 @@ RSpec.describe Guard::Cucumber do
       end
     end
 
-    context "with the :cli option" do
-      let(:options) { { cli: "--color" } }
+    context "with the :cmd_additional_args option" do
+      let(:options) { { cmd_additional_args: "--color" } }
 
-      it "directly passes :cli option to runner" do
+      it "directly passes :cmd_additional_args option to runner" do
         msg = "Running all features"
-        opts = default_options.merge(cli: "--color", message: msg)
+        opts = default_options.merge(cmd_additional_args: "--color",
+                                     message: msg)
 
         expect(runner).to receive(:run).with(["features"], opts).
           and_return(true)
@@ -197,9 +208,9 @@ RSpec.describe Guard::Cucumber do
 
     context "with a :run_all option" do
       let(:options) do
-        { rvm: ["1.8.7", "1.9.2"],
-          cli: "--color",
-          run_all: { cli: "--format progress" }
+        {
+          cmd_additional_args: "--color",
+          run_all: { cmd_additional_args: "--format progress" }
         }
       end
 
@@ -207,8 +218,8 @@ RSpec.describe Guard::Cucumber do
         expect(runner).to receive(:run).
           with(
             anything,
-            hash_including(cli: "--format progress", rvm: ["1.8.7", "1.9.2"])).
-          and_return(true)
+            hash_including(cmd_additional_args: "--format progress")
+          ).and_return(true)
 
         subject.run_all
       end
@@ -281,11 +292,13 @@ RSpec.describe Guard::Cucumber do
       subject.run_on_modifications(["features/foo"])
     end
 
-    context "with a :cli option" do
-      let(:options) { { cli: "--color" } }
+    context "with a :cmd_additional_args option" do
+      let(:options) { { cmd_additional_args: "--color" } }
 
-      it "directly passes the :cli option to the runner" do
-        opts = default_options.merge(cli: "--color").merge(msg_opts)
+      it "directly passes the :cmd_additional_args option to the runner" do
+        opts = default_options.merge(cmd_additional_args: "--color")
+        opts.merge!(msg_opts)
+
         expect(runner).to receive(:run).
           with(["features"], opts).and_return(true)
         subject.run_on_modifications(["features"])
@@ -343,36 +356,6 @@ RSpec.describe Guard::Cucumber do
 
         expect(runner).to receive(:run).
           with(["features/bar"], default_options).and_return(true)
-
-        subject.run_on_modifications(["features/bar"])
-      end
-    end
-
-    context "with the :change_format option" do
-      let(:options) { default_options.merge(cli: cli, change_format: "pretty") }
-
-      let(:cli) do
-        "-c"\
-          " --format progress"\
-          " --format OtherFormatter"\
-          " --out /dev/null"\
-          " --profile guard"
-      end
-
-      let(:expected_cli) do
-        "-c"\
-          " --format pretty"\
-          " --format OtherFormatter"\
-          " --out /dev/null"\
-          " --profile guard"
-      end
-
-      it "uses the change formatter if one is given" do
-        expect(runner).to receive(:run).
-          with(
-            ["features/bar"],
-            default_options.merge(change_format: "pretty", cli: expected_cli)
-        ).and_return(true)
 
         subject.run_on_modifications(["features/bar"])
       end

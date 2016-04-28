@@ -39,15 +39,15 @@ RSpec.describe Guard::Cucumber::Runner do
     it "runs cucumber according to passed cmd option" do
       req = @lib_path.join("guard/cucumber/notification_formatter.rb")
       expect(runner).to receive(:system).with(
-                          "xvfb-run bundle exec cucumber "\
-                          "--require #{ req } "\
-                          "--format Guard::Cucumber::NotificationFormatter "\
-                          "--out #{ null_device } "\
-                          "--require features features"
-          )
+        "xvfb-run bundle exec cucumber "\
+        "--require #{req} "\
+        "--format Guard::Cucumber::NotificationFormatter "\
+        "--out #{null_device} "\
+        "--require features features"
+      )
       runner.run(["features"], cmd: "xvfb-run bundle exec cucumber")
     end
-    
+
     context "with a :focus_on option" do
       it "passes the value in :focus_on to the Focuser" do
         paths = ["features"]
@@ -69,7 +69,7 @@ RSpec.describe Guard::Cucumber::Runner do
         expect(runner).to receive(:system).with(
           "cucumber --require #{req} "\
           "--format Guard::Cucumber::NotificationFormatter "\
-          "--out #{ null_device } --require features "\
+          "--out #{null_device} --require features "\
           "--custom command "\
           "features")
         runner.run(["features"], cmd_additional_args: "--custom command")

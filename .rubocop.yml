@@ -193,7 +193,7 @@ StringLiterals:
 VariableInterpolation:
   Enabled: false
 
-TrailingComma:
+Style/TrailingCommaInLiteral:
   Enabled: false
 
 TrivialAccessors:
