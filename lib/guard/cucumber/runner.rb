@@ -52,7 +52,7 @@ module Guard
         def cucumber_command(paths, options)
           cmd = []
           _add_cli_options(cmd, options[:cmd] || "cucumber")
-          _add_notification(cmd, options)
+          # _add_notification(cmd, options)
           _add_cli_options(cmd, options[:cmd_additional_args])
           (cmd + paths).join(" ")
         end
